@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 /**
  * DTO (Data Transfer Object) for updating a user.
  */
-export class UpdateUserDto {
+export class UpdateUserRequestDto {
   @ApiProperty({
     description: "The ID of the user to be updated."
   })
@@ -36,7 +36,7 @@ export class UpdateUserDto {
   password?: string;
 
   /**
-   * Creates an instance of UpdateUserDto.
+   * Creates an instance of UpdateUserRequestDto.
    * @param id - The ID of the user to be updated.
    * @param email - The new email of the user.
    * @param firstName - The new first name of the user.

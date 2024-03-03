@@ -4,7 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 /**
  * DTO (Data Transfer Object) for creating a user.
  */
-export class CreateUserDto {
+export class CreateUserRequestDto {
   @ApiProperty({ description: 'The email address of the user. Required and must not be empty.' }) 
   @IsNotEmpty()
   email: string;
@@ -22,7 +22,7 @@ export class CreateUserDto {
   password: string;
 
   /**
-   * Constructs a new CreateUserDto object.
+   * Constructs a new CreateUserRequestDto object.
    * @param {string} email - The email address of the user.
    * @param {string} firstName - The first name of the user.
    * @param {string} lastName - The last name of the user.
