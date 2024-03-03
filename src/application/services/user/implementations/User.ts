@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../../../domain/entities/User';
-import { CreateUserDto } from '../../../domain/dtos/user/Create';
-import { UpdateUserDto } from '../../../domain/dtos/user/Update';
-import { AbstractUserRepository } from '../../repositories/User';
+import { User } from '../../../../domain/entities/User';
+import { CreateUserRequestDto } from '../../../../domain/dtos/user/Create';
+import { UpdateUserRequestDto } from '../../../../domain/dtos/user/Update';
+import { AbstractUserRepository } from '../../../repositories/User';
 import { AbstractUserService } from '../User';
 
 /**
@@ -19,11 +19,11 @@ export class UserService implements AbstractUserService {
 
   /**
    * Executes the use case to create a user.
-   * @param {CreateUserDto} createUserDto - Data to create the user.
+   * @param {CreateUserRequestDto} CreateUserRequestDto - Data to create the user.
    * @returns {Promise<User>} A promise resolving to the created user.
    */
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    return this.userRepository.createUser(createUserDto);
+  async create(CreateUserRequestDto: CreateUserRequestDto): Promise<User> {
+    return this.userRepository.createUser(CreateUserRequestDto);
   }
 
   /**
@@ -39,18 +39,27 @@ export class UserService implements AbstractUserService {
    * @param {string} userId - The ID of the user to retrieve.
    * @returns {Promise<User | null>} The user if found, or null if not found.
   */
- async getById(userId: string): Promise<User | null> {
+  async getById(userId: string): Promise<User | null> {
    return this.userRepository.getUserById(userId);
+  }
+
+  /**
+     * Retrieves a user by Email.
+     * @param {string} email - The Email of the user to retrieve.
+     * @returns {Promise<User | null>} The user if found, or null if not found.
+    */
+  async getByEmail(email: string): Promise<User | null> {
+    return this.userRepository.getUserByEmail(email);
   }
 
   /**
    * Updates an existing user.
    * @param {string} userId - The ID of the user to update.
-   * @param {UpdateUserDto} updateUserDto - The data to update the user.
+   * @param {UpdateUserRequestDto} UpdateUserRequestDto - The data to update the user.
    * @returns {Promise<User | null>} A promise resolving to the updated user if found and updated, or null if not found.
    */
-  async update(userId: string, updateUserDto: UpdateUserDto): Promise<User | null> {
-    return this.userRepository.updateUser(userId, updateUserDto);
+  async update(userId: string, UpdateUserRequestDto: UpdateUserRequestDto): Promise<User | null> {
+    return this.userRepository.updateUser(userId, UpdateUserRequestDto);
   }
 
   /**
