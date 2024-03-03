@@ -1,9 +1,9 @@
 import { Controller, Post, Body, Get, Param, Put, Delete } from '@nestjs/common';
-import { AbstractUserService } from '../../application/service/User';
-import { CreateUserDto } from '../../domain/dtos/user/Create';
-import { UpdateUserDto } from '../../domain/dtos/user/Update';
-import { User } from '../../domain/entities/User';
-import { AbstractUsersController } from '../../application/controllers/User';
+import { AbstractUserService } from '../../../application/services/user/User';
+import { CreateUserRequestDto } from '../../../domain/dtos/user/Create';
+import { UpdateUserRequestDto } from '../../../domain/dtos/user/Update';
+import { User } from '../../../domain/entities/User';
+import { AbstractUsersController } from '../../../application/controllers/User';
 import { ApiTags } from '@nestjs/swagger';
 
 /**
@@ -18,12 +18,12 @@ export class UsersController implements AbstractUsersController{
 
   /**
    * Endpoint for creating a new user.
-   * @param {CreateUserDto} createUserDto - Data to create the user.
+   * @param {CreateUserRequestDto} CreateUserRequestDto - Data to create the user.
    * @returns {Promise<User>} A promise resolving to the created user.
    */
   @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.userService.create(createUserDto);
+  create(@Body() CreateUserRequestDto: CreateUserRequestDto): Promise<User> {
+    return this.userService.create(CreateUserRequestDto);
   }
 
   /**
@@ -39,12 +39,12 @@ export class UsersController implements AbstractUsersController{
   /**
    * Endpoint for updating an existing user.
    * @param {string} userId - The ID of the user to update.
-   * @param {UpdateUserDto} updateUserDto - Data to update the user.
+   * @param {UpdateUserRequestDto} UpdateUserRequestDto - Data to update the user.
    * @returns {Promise<User | null>} A promise resolving to the updated user if found and updated, or null if not found.
    */
   @Put(':id')
-  update(@Param('id') userId: string, @Body() updateUserDto: UpdateUserDto): Promise<User | null> {
-    return this.userService.update(userId, updateUserDto);
+  update(@Param('id') userId: string, @Body() UpdateUserRequestDto: UpdateUserRequestDto): Promise<User | null> {
+    return this.userService.update(userId, UpdateUserRequestDto);
   }
 
   /**
