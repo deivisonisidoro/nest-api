@@ -9,6 +9,8 @@ import { AbstractAuthService } from 'src/application/services/auth/Auth';
 import { AbstractUserRepository } from 'src/application/repositories/User';
 import { PrismaUserRepository } from 'src/infra/repositories/PrismaUser';
 import { PrismaService } from 'src/infra/database/prisma.service';
+import { AbstractPasswordHasher } from 'src/application/providers/password-hasher';
+import { PasswordHasher } from 'src/infra/providers/password-hasher';
 
 @Module({
   imports: [
@@ -31,6 +33,10 @@ import { PrismaService } from 'src/infra/database/prisma.service';
     {
       provide: AbstractUserRepository,
       useClass: PrismaUserRepository
+    },
+    {
+      provide: AbstractPasswordHasher,
+      useClass: PasswordHasher
     },
     PrismaService
   ],

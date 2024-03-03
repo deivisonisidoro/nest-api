@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from '../../../../domain/entities/User';
 import { CreateUserRequestDto } from '../../../../domain/dtos/user/Create';
 import { UpdateUserRequestDto } from '../../../../domain/dtos/user/Update';
 import { AbstractUserRepository } from '../../../repositories/User';
 import { AbstractUserService } from '../User';
+import { AbstractPasswordHasher } from 'src/application/providers/password-hasher';
 
 /**
  * Implementation of the service handling user operations.
@@ -15,15 +16,25 @@ export class UserService implements AbstractUserService {
    * Constructs the UserService.
    * @param {AbstractUserRepository} userRepository - The repository for user data.
    */
-  constructor(private readonly userRepository: AbstractUserRepository) {}
+  constructor(
+    private readonly userRepository: AbstractUserRepository,
+    private passwordHasher: AbstractPasswordHasher,  
+  ) {}
 
   /**
    * Executes the use case to create a user.
-   * @param {CreateUserRequestDto} CreateUserRequestDto - Data to create the user.
+   * @param {CreateUserRequestDto} createUserRequestDto - Data to create the user.
    * @returns {Promise<User>} A promise resolving to the created user.
    */
-  async create(CreateUserRequestDto: CreateUserRequestDto): Promise<User> {
-    return this.userRepository.createUser(CreateUserRequestDto);
+  async create(createUserRequestDto: CreateUserRequestDto): Promise<User> {
+    const userAlreadyExists = await this.userRepository.getUserByEmail(
+      createUserRequestDto.email,
+    )
+    if (userAlreadyExists){
+      throw new BadRequestException("User already exists");
+    }
+    const passwordHashed = await this.passwordHasher.hashPassword(createUserRequestDto.password)
+    return this.userRepository.createUser({...createUserRequestDto, password: passwordHashed});
   }
 
   /**

@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AbstractUserService } from '../../user/User';
 import { JwtService } from '@nestjs/jwt';
 import { AbstractAuthService } from '../Auth';
+import { AbstractPasswordHasher } from '../../../providers/password-hasher';
 
 /**
  * Service responsible for authentication operations.
@@ -10,7 +11,8 @@ import { AbstractAuthService } from '../Auth';
 export class AuthService implements AbstractAuthService {
   constructor(
     private usersService: AbstractUserService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private passwordHasher: AbstractPasswordHasher,
   ) {}
   
   /**
@@ -26,10 +28,17 @@ export class AuthService implements AbstractAuthService {
   ): Promise<{ access_token: string }> {
     const user = await this.usersService.getByEmail(email);
     
-    if (user?.password !== pass) {
+    if (!user) {
+      throw new BadRequestException('User with provided email does not exist');
+    }
+    const passwordMatch = await this.passwordHasher.comparePasswords(
+      pass,
+      user.password,
+    )
+    if (!passwordMatch) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.id, username: user.email };
+    const payload = { sub: user.id, email: user.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
