@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 
 /**
  * DTO (Data Transfer Object) for updating a user.
@@ -13,6 +14,7 @@ export class UpdateUserRequestDto {
     required: false,
     description: "The new email of the user. Optional."
   })
+  @IsEmail()
   email?: string;
   
   @ApiProperty({ 
@@ -33,6 +35,7 @@ export class UpdateUserRequestDto {
     required: false,
     description:  "The new password of the user."
   })
+  @MinLength(8)
   password?: string;
 
   /**

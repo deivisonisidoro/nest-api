@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcryptjs'
-import { AbstractPasswordHasher } from 'src/application/providers/password-hasher'
+import { AbstractPasswordHasher } from 'src/application/providers/PasswordHasher'
 
 /**
  * Implementation of the password hashing provider using bcrypt.

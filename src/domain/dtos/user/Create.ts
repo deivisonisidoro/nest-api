@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
@@ -7,10 +7,11 @@ import { ApiProperty } from "@nestjs/swagger";
 export class CreateUserRequestDto {
   @ApiProperty({ description: 'The email address of the user. Required and must not be empty.' }) 
   @IsNotEmpty()
+  @IsEmail() 
   email: string;
   
   @ApiProperty({ description: 'The first name of the user. Required and must not be empty.' }) 
-  @IsNotEmpty() 
+  @IsNotEmpty()
   firstName: string;
   
   @ApiProperty({ description: 'The last name of the user. Required and must not be empty.' }) 
@@ -18,7 +19,8 @@ export class CreateUserRequestDto {
   lastName: string;
   
   @ApiProperty({ description: 'The password of the user. Required and must not be empty.' })
-  @IsNotEmpty() 
+  @IsNotEmpty()
+  @MinLength(8)
   password: string;
 
   /**

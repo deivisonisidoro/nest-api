@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 import { AbstractUserService } from '../../user/User';
 import { JwtService } from '@nestjs/jwt';
 import { AbstractAuthService } from '../Auth';
-import { AbstractPasswordHasher } from '../../../providers/password-hasher';
+import { AbstractPasswordHasher } from '../../../providers/PasswordHasher';
 
 /**
  * Service responsible for authentication operations.
@@ -29,14 +29,14 @@ export class AuthService implements AbstractAuthService {
     const user = await this.usersService.getByEmail(email);
     
     if (!user) {
-      throw new BadRequestException('User with provided email does not exist');
+      throw new BadRequestException('Email or password incorrect.');
     }
     const passwordMatch = await this.passwordHasher.comparePasswords(
       pass,
       user.password,
     )
     if (!passwordMatch) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Email or password incorrect.');
     }
     const payload = { sub: user.id, email: user.email };
     return {

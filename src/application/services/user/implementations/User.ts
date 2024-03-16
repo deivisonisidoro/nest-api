@@ -4,7 +4,7 @@ import { CreateUserRequestDto } from '../../../../domain/dtos/user/Create';
 import { UpdateUserRequestDto } from '../../../../domain/dtos/user/Update';
 import { AbstractUserRepository } from '../../../repositories/User';
 import { AbstractUserService } from '../User';
-import { AbstractPasswordHasher } from 'src/application/providers/password-hasher';
+import { AbstractPasswordHasher } from 'src/application/providers/PasswordHasher';
 
 /**
  * Implementation of the service handling user operations.
