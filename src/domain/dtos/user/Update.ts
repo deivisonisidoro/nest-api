@@ -5,11 +5,6 @@ import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
  * DTO (Data Transfer Object) for updating a user.
  */
 export class UpdateUserRequestDto {
-  @ApiProperty({
-    description: "The ID of the user to be updated."
-  })
-  id: string;
-
   @ApiProperty({ 
     required: false,
     description: "The new email of the user. Optional."
@@ -46,8 +41,7 @@ export class UpdateUserRequestDto {
    * @param lastName - The new last name of the user.
    * @param password - The new password of the user.
    */
-  constructor(id: string, email?: string, firstName?: string, lastName?: string, password?: string) {
-    this.id = id;
+  constructor(email?: string, firstName?: string, lastName?: string, password?: string) {
     if (email) this.email = email;
     if (firstName) this.firstName = firstName;
     if (lastName) this.lastName = lastName;

@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '../../../../domain/entities/User';
 import { CreateUserRequestDto } from '../../../../domain/dtos/user/Create';
 import { UpdateUserRequestDto } from '../../../../domain/dtos/user/Update';
 import { AbstractUserRepository } from '../../../repositories/User';
 import { AbstractUserService } from '../User';
-import { AbstractPasswordHasher } from 'src/application/providers/PasswordHasher';
+import { AbstractPasswordHasher } from '../../../../application/providers/PasswordHasher';
+import { UserErrorMessageEnum } from '../../../../domain/enums/user/ErrorMessage';
 
 /**
  * Implementation of the service handling user operations.
@@ -31,7 +32,7 @@ export class UserService implements AbstractUserService {
       createUserRequestDto.email,
     )
     if (userAlreadyExists){
-      throw new BadRequestException("User already exists");
+      throw new BadRequestException(UserErrorMessageEnum.UserAlreadyExists);
     }
     const passwordHashed = await this.passwordHasher.hashPassword(createUserRequestDto.password)
     return this.userRepository.createUser({...createUserRequestDto, password: passwordHashed});
@@ -42,7 +43,11 @@ export class UserService implements AbstractUserService {
    * @returns {Promise<User[]>} A promise resolving to an array of all users.
    */
   async getAll(): Promise<User[]> {
-    return this.userRepository.getAllUsers();
+    const users = await this.userRepository.getAllUsers();
+    if(users.length === 0){
+      throw new NotFoundException(UserErrorMessageEnum.UserNotFound);
+    }
+    return users
   }
   
   /**
@@ -51,7 +56,11 @@ export class UserService implements AbstractUserService {
    * @returns {Promise<User | null>} The user if found, or null if not found.
   */
   async getById(userId: string): Promise<User | null> {
-   return this.userRepository.getUserById(userId);
+    const user = await this.userRepository.getUserById(userId);
+    if (!user){
+      throw new BadRequestException(UserErrorMessageEnum.UserDoesNotExist);
+    }
+   return user
   }
 
   /**
@@ -60,17 +69,31 @@ export class UserService implements AbstractUserService {
      * @returns {Promise<User | null>} The user if found, or null if not found.
     */
   async getByEmail(email: string): Promise<User | null> {
-    return this.userRepository.getUserByEmail(email);
+    const user = await this.userRepository.getUserByEmail(email);
+    if (!user){
+      throw new BadRequestException(UserErrorMessageEnum.UserDoesNotExist);
+    }
+    return user;
   }
 
   /**
    * Updates an existing user.
    * @param {string} userId - The ID of the user to update.
-   * @param {UpdateUserRequestDto} UpdateUserRequestDto - The data to update the user.
+   * @param {UpdateUserRequestDto} updateUserRequestDto - The data to update the user.
    * @returns {Promise<User | null>} A promise resolving to the updated user if found and updated, or null if not found.
    */
-  async update(userId: string, UpdateUserRequestDto: UpdateUserRequestDto): Promise<User | null> {
-    return this.userRepository.updateUser(userId, UpdateUserRequestDto);
+  async update(userId: string, updateUserRequestDto: UpdateUserRequestDto): Promise<User | null> {
+    const user = await this.userRepository.getUserByEmail(
+      updateUserRequestDto.email,
+    )
+    if (!user) {
+      throw new BadRequestException(UserErrorMessageEnum.UserDoesNotExist);
+    }
+    if (updateUserRequestDto.password) {
+      updateUserRequestDto.password = await this.passwordHasher.hashPassword(updateUserRequestDto.password)
+    }
+    const userUpdated = await this.userRepository.updateUser(userId, updateUserRequestDto);
+    return userUpdated
   }
 
   /**
@@ -79,7 +102,11 @@ export class UserService implements AbstractUserService {
    * @returns {Promise<boolean>} A promise resolving to true if the user was deleted successfully, false otherwise.
    */
   async delete(userId: string): Promise<boolean> {
-    return this.userRepository.deleteUser(userId);
+    const user = await this.userRepository.getUserById(userId);
+    if (!user) {
+      throw new BadRequestException(UserErrorMessageEnum.UserDoesNotExist);
+    }
+    return await this.userRepository.deleteUser(userId);
   }
 
 }
