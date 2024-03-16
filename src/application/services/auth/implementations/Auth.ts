@@ -3,6 +3,7 @@ import { AbstractUserService } from '../../user/User';
 import { JwtService } from '@nestjs/jwt';
 import { AbstractAuthService } from '../Auth';
 import { AbstractPasswordHasher } from '../../../providers/PasswordHasher';
+import { AuthErrorMessageEnum } from '../../../../domain/enums/auth/ErrorMessage';
 
 /**
  * Service responsible for authentication operations.
@@ -29,14 +30,14 @@ export class AuthService implements AbstractAuthService {
     const user = await this.usersService.getByEmail(email);
     
     if (!user) {
-      throw new BadRequestException('Email or password incorrect.');
+      throw new BadRequestException(AuthErrorMessageEnum.EmailOrPasswordWrong);
     }
     const passwordMatch = await this.passwordHasher.comparePasswords(
       pass,
       user.password,
     )
     if (!passwordMatch) {
-      throw new UnauthorizedException('Email or password incorrect.');
+      throw new UnauthorizedException(AuthErrorMessageEnum.EmailOrPasswordWrong);
     }
     const payload = { sub: user.id, email: user.email };
     return {
