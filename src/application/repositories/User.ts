@@ -8,10 +8,10 @@ import { UpdateUserRequestDto } from '../../domain/dtos/user/Update';
 export abstract class AbstractUserRepository {
   /**
    * Creates a new user.
-   * @param {CreateUserRequestDto} CreateUserRequestDto - Data to create the user.
+   * @param {CreateUserRequestDto} createUserRequestDto - Data to create the user.
    * @returns {Promise<User>} The created user.
    */
-  abstract createUser(CreateUserRequestDto: CreateUserRequestDto): Promise<User>;
+  abstract createUser(createUserRequestDto: CreateUserRequestDto): Promise<User>;
 
   /**
    * Retrieves a user by ID.
@@ -30,10 +30,10 @@ export abstract class AbstractUserRepository {
   /**
    * Updates a user.
    * @param {string} userId - The ID of the user to update.
-   * @param {UpdateUserRequestDto} UpdateUserRequestDto - Data to update the user.
+   * @param {UpdateUserRequestDto} updateUserRequestDto - Data to update the user.
    * @returns {Promise<User | null>} The updated user if found and updated, or null if not found.
    */
-  abstract updateUser(userId: string, UpdateUserRequestDto: UpdateUserRequestDto): Promise<User | null>;
+  abstract updateUser(userId: string, updateUserRequestDto: UpdateUserRequestDto): Promise<User | null>;
 
   /**
    * Deletes a user by ID.

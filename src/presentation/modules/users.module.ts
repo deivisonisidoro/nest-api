@@ -5,8 +5,8 @@ import { UsersController } from '../controllers/user/User';
 import { PrismaUserRepository } from '../../infra/repositories/PrismaUser';
 import { AbstractUserRepository } from '../../application/repositories/User';
 import { PrismaService } from '../../infra/database/prisma.service';
-import { AbstractPasswordHasher } from 'src/application/providers/PasswordHasher';
-import { PasswordHasher } from 'src/infra/providers/PasswordHasher';
+import { AbstractPasswordHasher } from '../../application/providers/PasswordHasher';
+import { PasswordHasher } from '../../infra/providers/PasswordHasher';
 
 @Module({
   controllers: [UsersController],

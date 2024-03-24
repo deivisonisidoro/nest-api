@@ -3,14 +3,14 @@ import { AuthService } from '../../application/services/auth/implementations/Aut
 import { AuthController } from '../controllers/auth/Auth';
 import { UsersModule } from './users.module';
 import { JwtModule } from '@nestjs/jwt';
-import { AbstractUserService } from 'src/application/services/user/User';
-import { UserService } from 'src/application/services/user/implementations/User';
-import { AbstractAuthService } from 'src/application/services/auth/Auth';
-import { AbstractUserRepository } from 'src/application/repositories/User';
-import { PrismaUserRepository } from 'src/infra/repositories/PrismaUser';
-import { PrismaService } from 'src/infra/database/prisma.service';
-import { AbstractPasswordHasher } from 'src/application/providers/PasswordHasher';
-import { PasswordHasher } from 'src/infra/providers/PasswordHasher';
+import { AbstractUserService } from '../../application/services/user/User';
+import { UserService } from '../../application/services/user/implementations/User';
+import { AbstractAuthService } from '../../application/services/auth/Auth';
+import { AbstractUserRepository } from '../../application/repositories/User';
+import { PrismaUserRepository } from '../../infra/repositories/PrismaUser';
+import { PrismaService } from '../../infra/database/prisma.service';
+import { AbstractPasswordHasher } from '../../application/providers/PasswordHasher';
+import { PasswordHasher } from '../../infra/providers/PasswordHasher';
 
 @Module({
   imports: [

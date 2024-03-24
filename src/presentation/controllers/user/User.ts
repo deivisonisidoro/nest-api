@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { AbstractUserService } from '../../../application/services/user/User';
 import { CreateUserRequestDto } from '../../../domain/dtos/user/Create';
 import { UpdateUserRequestDto } from '../../../domain/dtos/user/Update';
@@ -22,8 +22,8 @@ export class UsersController implements AbstractUsersController{
    * @returns {Promise<User>} A promise resolving to the created user.
    */
   @Post()
-  create(@Body() CreateUserRequestDto: CreateUserRequestDto): Promise<User> {
-    return this.userService.create(CreateUserRequestDto);
+  create(@Body() createUserRequestDto: CreateUserRequestDto): Promise<User> {
+    return this.userService.create(createUserRequestDto);
   }
 
   /**
@@ -39,12 +39,12 @@ export class UsersController implements AbstractUsersController{
   /**
    * Endpoint for updating an existing user.
    * @param {string} userId - The ID of the user to update.
-   * @param {UpdateUserRequestDto} UpdateUserRequestDto - Data to update the user.
+   * @param {UpdateUserRequestDto} updateUserRequestDto - Data to update the user.
    * @returns {Promise<User | null>} A promise resolving to the updated user if found and updated, or null if not found.
    */
   @Put(':id')
-  update(@Param('id') userId: string, @Body() UpdateUserRequestDto: UpdateUserRequestDto): Promise<User | null> {
-    return this.userService.update(userId, UpdateUserRequestDto);
+  update(@Param('id') userId: string, @Body() updateUserRequestDto: UpdateUserRequestDto): Promise<User | null> {
+    return this.userService.update(userId, updateUserRequestDto);
   }
 
   /**
