@@ -80,10 +80,17 @@ describe('UserController (e2e)', () => {
      */
     it('Should be able to update password of an existing user', async () => {
       const { body } = await request(app.getHttpServer())
-        .post('/users')
-        .send(userData);
+      .post('/users')
+      .send(userData);
+      
+      const loginReq = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email: userData.email, password: userData.password })
+      const token = loginReq.body.access_token;
+      
       const response = await request(app.getHttpServer())
         .put(`/users/${body.id}`)
+        .set('Authorization', 'Bearer ' + token)
         .send({
           ...userData,
           password: '123',
@@ -96,8 +103,18 @@ describe('UserController (e2e)', () => {
      * Test case to verify that it's not possible to update a non-existing user.
      */
     it('Should not be able to update an not existing user', async () => {
+      await request(app.getHttpServer())
+      .post('/users')
+      .send(userData);
+      
+      const loginReq = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email: userData.email, password: userData.password })
+
+      const token = loginReq.body.access_token;
       const response = await request(app.getHttpServer())
         .patch('/users/:id')
+        .set('Authorization', 'Bearer ' + token)
         .send({
           email: 'testUpdatedExisting@test.com.br',
         });
@@ -117,20 +134,17 @@ describe('UserController (e2e)', () => {
       await request(app.getHttpServer())
         .post('/users')
         .send(userData);
+        
+      const loginReq = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email: userData.email, password: userData.password })
+  
+      const token = loginReq.body.access_token;
       const response = await request(app.getHttpServer())
-        .get('/users');
+        .get('/users')
+        .set('Authorization', 'Bearer ' + token);
 
       expect(response.status).toBe(HttpStatus.OK);
-    });
-
-    /**
-     * Test case to verify that it's not possible to get a list of users.
-     */
-    it('Should not be able to get a list of users', async () => {
-      const response = await request(app.getHttpServer())
-        .get('/users');
-
-      expect(response.status).toBe(HttpStatus.NOT_FOUND);
     });
 
     /**
@@ -140,9 +154,16 @@ describe('UserController (e2e)', () => {
       const { body } = await request(app.getHttpServer())
         .post('/users')
         .send(userData);
+        
+      const loginReq = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email: userData.email, password: userData.password })
+  
+      const token = loginReq.body.access_token;
 
       const response = await request(app.getHttpServer())
-        .get(`/users/${body.id}`);
+        .get(`/users/${body.id}`)
+        .set('Authorization', 'Bearer ' + token);
 
       expect(response.status).toBe(HttpStatus.OK);
     });
@@ -151,8 +172,19 @@ describe('UserController (e2e)', () => {
      * Test case to verify that it's not possible to get a user.
      */
     it('Should not be able to get user', async () => {
+      await request(app.getHttpServer())
+        .post('/users')
+        .send(userData);
+        
+      const loginReq = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email: userData.email, password: userData.password })
+
+      const token = loginReq.body.access_token;
+      
       const response = await request(app.getHttpServer())
-        .get(`/users/:id`);
+        .get(`/users/:id`)
+        .set('Authorization', 'Bearer ' + token);
 
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
@@ -170,8 +202,14 @@ describe('UserController (e2e)', () => {
         .post('/users')
         .send(userData);
 
+      const loginReq = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email: userData.email, password: userData.password })
+  
+      const token = loginReq.body.access_token;
       const response = await request(app.getHttpServer())
-        .delete(`/users/${body.id}`);
+        .delete(`/users/${body.id}`)
+        .set('Authorization', 'Bearer ' + token);
 
       expect(response.status).toBe(HttpStatus.OK);
     });
@@ -180,8 +218,18 @@ describe('UserController (e2e)', () => {
      * Test case to verify that it's not possible to delete an existing user when userId is wrong.
      */
     it('Should not be able to delete an existing user when userId is wrong', async () => {
+      await request(app.getHttpServer())
+        .post('/users')
+        .send(userData);
+        
+      const loginReq = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email: userData.email, password: userData.password })
+  
+      const token = loginReq.body.access_token;
       const response = await request(app.getHttpServer())
-        .delete('/users/testID');
+        .delete('/users/testID')
+        .set('Authorization', 'Bearer ' + token);
 
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });

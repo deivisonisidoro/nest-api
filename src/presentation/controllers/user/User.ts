@@ -5,6 +5,7 @@ import { UpdateUserRequestDto } from '../../../domain/dtos/user/Update';
 import { User } from '../../../domain/entities/User';
 import { AbstractUsersController } from '../../../application/controllers/User';
 import { ApiTags } from '@nestjs/swagger';
+import { Public } from '../../helpers/customDecorator/Public';
 
 /**
  * Controller for handling user-related operations.
@@ -22,6 +23,7 @@ export class UsersController implements AbstractUsersController{
    * @returns {Promise<User>} A promise resolving to the created user.
    */
   @Post()
+  @Public()
   create(@Body() createUserRequestDto: CreateUserRequestDto): Promise<User> {
     return this.userService.create(createUserRequestDto);
   }

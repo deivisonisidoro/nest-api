@@ -11,6 +11,9 @@ import { PrismaUserRepository } from '../../infra/repositories/PrismaUser';
 import { PrismaService } from '../../infra/database/prisma.service';
 import { AbstractPasswordHasher } from '../../application/providers/PasswordHasher';
 import { PasswordHasher } from '../../infra/providers/PasswordHasher';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from '../guards/auth/auth.guard';
+
 
 @Module({
   imports: [
@@ -18,13 +21,17 @@ import { PasswordHasher } from '../../infra/providers/PasswordHasher';
     JwtModule.register({
       global: true,
       secret:  process.env.SECRET_KEY,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '60m' },
     }),
   ],
   providers: [
     {
       provide: AbstractUserService,
       useClass: UserService
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
     },
     {
       provide: AbstractAuthService,

@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { LoginRequestDTO } from '../src/domain/dtos/auth/Login';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infra/database/prisma.service';
 
@@ -10,10 +9,6 @@ import { PrismaService } from '../src/infra/database/prisma.service';
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
-  const signInDto: LoginRequestDTO = {
-    email: 'test@example.com',
-    password: 'password',
-  };
   const userData = {
     email: 'test@example.com',
     password: 'password',
@@ -60,5 +55,45 @@ describe('AuthController (e2e)', () => {
       })
       
     expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+  });
+  
+  it('should be able to return information of user', async () => {
+    const loginReq = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        email: userData.email,
+        password: userData.password
+      })
+      const token  = loginReq.body.access_token
+      
+      const response = await request(app.getHttpServer())
+      .get('/auth/profile')
+      .set('Authorization', 'Bearer ' + token)
+      .send({
+        email: "test",
+        password: "test"
+      })
+      
+    expect(response.status).toBe(HttpStatus.OK);
+  });
+  
+  it('should not be able to return information of user', async () => {
+    const loginReq = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        email: "test",
+        password: "test"
+      })
+      const token  = loginReq.body.access_token
+
+      const response = await request(app.getHttpServer())
+      .get('/auth/profile')
+      .set('Authorization', 'Bearer ' + token)
+      .send({
+        email: "test",
+        password: "test"
+      })
+      
+    expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
   });
 });
