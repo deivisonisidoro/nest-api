@@ -1,9 +1,9 @@
 import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AbstractAuthService } from '../../../application/services/auth/Auth';
-import { LoginRequestDTO } from '../../../domain/dtos/auth/Login';
+import { LoginRequestDTO } from '../../../../domain/dtos/auth/Login';
 import { AuthGuard } from '../../guards/auth/auth.guard';
 import { Public } from '../../helpers/customDecorator/Public';
+import { AbstractAuthService } from '../../../../application/services/Auth';
 
 @ApiTags("Auth")
 @Controller('auth')

@@ -1,13 +1,12 @@
-import { UserService } from './User';
-import { AbstractUserRepository } from '../../../repositories/User';
-import { AbstractPasswordHasher } from '../../../../application/providers/PasswordHasher';
-import { UserErrorMessageEnum } from '../../../../domain/enums/user/ErrorMessage';
-import { User } from '../../../../domain/entities/User';
-import { CreateUserRequestDto } from '../../../../domain/dtos/user/Create';
-import { UpdateUserRequestDto } from '../../../../domain/dtos/user/Update';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
-import { left } from '../../../../domain/utils/either/either';
+import { User } from "@prisma/client";
+import { AbstractPasswordHasher } from "../../../application/providers/PasswordHasher";
+import { AbstractUserRepository } from "../../../application/repositories/User";
+import { CreateUserRequestDto } from "../../../domain/dtos/user/Create";
+import { UpdateUserRequestDto } from "../../../domain/dtos/user/Update";
+import { UserErrorMessageEnum } from "../../../domain/enums/user/ErrorMessage";
+import { left } from "../../../domain/utils/either/either";
+import { RequiredParametersError } from "../../../domain/utils/errors/RequiredParametersError";
+import { UserService } from "./User";
 
 
 /**

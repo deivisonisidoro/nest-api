@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserRequestDto } from '../../../../domain/dtos/user/Create';
-import { UpdateUserRequestDto } from '../../../../domain/dtos/user/Update';
-import { AbstractPasswordHasher } from '../../../../application/providers/PasswordHasher';
-import { UserErrorMessageEnum } from '../../../../domain/enums/user/ErrorMessage';
-import { AbstractUserRepository } from '../../../repositories/User';
-import { AbstractUserService, CreateUserResponse, DeleteUserResponse, GetUsersResponse, UserResponse } from '../User';
-import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
-import { left, right } from '../../../../domain/utils/either/either';
+import { AbstractPasswordHasher } from '../../../application/providers/PasswordHasher';
+import { AbstractUserRepository } from '../../../application/repositories/User';
+import { AbstractUserService, CreateUserResponse, GetUsersResponse, UserResponse, DeleteUserResponse } from '../../../application/services/User';
+import { CreateUserRequestDto } from '../../../domain/dtos/user/Create';
+import { UpdateUserRequestDto } from '../../../domain/dtos/user/Update';
+import { UserErrorMessageEnum } from '../../../domain/enums/user/ErrorMessage';
+import { left, right } from '../../../domain/utils/either/either';
+import { RequiredParametersError } from '../../../domain/utils/errors/RequiredParametersError';
+
 
 /**
  * Implementation of the service handling user operations.

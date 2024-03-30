@@ -1,10 +1,11 @@
-import { AuthService } from '../implementations/Auth';
-import { JwtService } from '@nestjs/jwt';
-import { AbstractPasswordHasher } from '../../../providers/PasswordHasher';
-import { AuthErrorMessageEnum } from '../../../../domain/enums/auth/ErrorMessage';
-import { AbstractUserRepository } from '../../../../application/repositories/User';
-import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
-import { left } from '../../../../domain/utils/either/either';
+import { JwtService } from "@nestjs/jwt";
+import { AbstractPasswordHasher } from "../../../application/providers/PasswordHasher";
+import { AbstractUserRepository } from "../../../application/repositories/User";
+import { AuthErrorMessageEnum } from "../../../domain/enums/auth/ErrorMessage";
+import { left } from "../../../domain/utils/either/either";
+import { RequiredParametersError } from "../../../domain/utils/errors/RequiredParametersError";
+import { AuthService } from "./Auth";
+
 
 /**
  * Unit tests for the AuthService class.

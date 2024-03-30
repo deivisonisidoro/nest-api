@@ -1,13 +1,12 @@
 import { Controller, Post, Body, Get, Param, Put, Delete, BadRequestException, NotFoundException } from '@nestjs/common';
-import { AbstractUserService } from '../../../application/services/user/User';
-import { CreateUserRequestDto } from '../../../domain/dtos/user/Create';
-import { UpdateUserRequestDto } from '../../../domain/dtos/user/Update';
-import { User } from '../../../domain/entities/User';
-import { AbstractUsersController } from '../../../application/controllers/User';
+import { CreateUserRequestDto } from '../../../../domain/dtos/user/Create';
+import { UpdateUserRequestDto } from '../../../../domain/dtos/user/Update';
+import { User } from '../../../../domain/entities/User';
+import { AbstractUsersController } from '../../../../application/controllers/User';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from '../../helpers/customDecorator/Public';
-import { RequiredParametersError } from 'src/domain/utils/errors/RequiredParametersError';
-import { Right } from 'src/domain/utils/either/Right';
+import { AbstractUserService } from '../../../../application/services/User';
+
 
 /**
  * Controller for handling user-related operations.

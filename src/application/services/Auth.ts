@@ -1,5 +1,6 @@
-import { RequiredParametersError } from "../../../domain/utils/errors/RequiredParametersError";
-import { Either } from "../../../domain/utils/either/either";
+import { Either } from "../../domain/utils/either/either";
+import { RequiredParametersError } from "../../domain/utils/errors/RequiredParametersError";
+
 
 export type LoginResponse = Either<RequiredParametersError, { access_token: string }>
 

@@ -4,7 +4,7 @@ import { User } from '../../domain/entities/User';
 import { CreateUserRequestDto } from '../../domain/dtos/user/Create';
 import { UpdateUserRequestDto } from '../../domain/dtos/user/Update';
 import { AbstractUserRepository } from '../../application/repositories/User';
-import { PrismaService } from '../database/prisma.service'; 
+import { PrismaService } from '../database/nestPrisma/prisma.service'; 
 
 /**
  * Implementation of UserRepository using Prisma as the data source.

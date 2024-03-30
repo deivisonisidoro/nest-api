@@ -1,8 +1,9 @@
-import { User } from '../../../domain/entities/User';
-import { CreateUserRequestDto } from '../../../domain/dtos/user/Create';
-import { UpdateUserRequestDto } from '../../../domain/dtos/user/Update';
-import { RequiredParametersError } from 'src/domain/utils/errors/RequiredParametersError';
-import { Either } from '../../../domain/utils/either/either';
+
+import { CreateUserRequestDto } from "../../domain/dtos/user/Create";
+import { User } from "../../domain/entities/User";
+import { Either } from "../../domain/utils/either/either";
+import { RequiredParametersError } from "../../domain/utils/errors/RequiredParametersError";
+import { UpdateUserRequestDto } from "../../domain/dtos/user/Update";
 
 
 export type CreateUserResponse = Either<RequiredParametersError, User>
@@ -17,10 +18,10 @@ export type UserResponse = Either<RequiredParametersError, User | null>
 export abstract class AbstractUserService {
   /**
    * Executes the use case to create a new user.
-   * @param {CreateUserRequestDto} CreateUserRequestDto - The data required to create the user.
+   * @param {CreateUserRequestDto} createUserRequestDto - The data required to create the user.
    * @returns {Promise<CreateUserResponse>} A promise resolving to the created user.
    */
-  abstract create(CreateUserRequestDto: CreateUserRequestDto): Promise<CreateUserResponse>;
+  abstract create(createUserRequestDto: CreateUserRequestDto): Promise<CreateUserResponse>;
   
   /**
    * Retrieves all users.

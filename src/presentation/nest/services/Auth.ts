@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AbstractAuthService, LoginResponse } from '../Auth';
-import { AbstractPasswordHasher } from '../../../providers/PasswordHasher';
-import { AuthErrorMessageEnum } from '../../../../domain/enums/auth/ErrorMessage';
-import { left, right } from '../../../../domain/utils/either/either';
-import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
-import { AbstractUserRepository } from '../../../../application/repositories/User';
+import { AbstractPasswordHasher } from '../../../application/providers/PasswordHasher';
+import { AbstractUserRepository } from '../../../application/repositories/User';
+import { AbstractAuthService, LoginResponse } from '../../../application/services/Auth';
+import { AuthErrorMessageEnum } from '../../../domain/enums/auth/ErrorMessage';
+import { left, right } from '../../../domain/utils/either/either';
+import { RequiredParametersError } from '../../../domain/utils/errors/RequiredParametersError';
+
 
 /**
  * Service responsible for authentication operations.
