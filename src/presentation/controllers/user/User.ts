@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Put, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete, BadRequestException, NotFoundException } from '@nestjs/common';
 import { AbstractUserService } from '../../../application/services/user/User';
 import { CreateUserRequestDto } from '../../../domain/dtos/user/Create';
 import { UpdateUserRequestDto } from '../../../domain/dtos/user/Update';
@@ -6,6 +6,8 @@ import { User } from '../../../domain/entities/User';
 import { AbstractUsersController } from '../../../application/controllers/User';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from '../../helpers/customDecorator/Public';
+import { RequiredParametersError } from 'src/domain/utils/errors/RequiredParametersError';
+import { Right } from 'src/domain/utils/either/Right';
 
 /**
  * Controller for handling user-related operations.
@@ -19,34 +21,46 @@ export class UsersController implements AbstractUsersController{
 
   /**
    * Endpoint for creating a new user.
-   * @param {CreateUserRequestDto} CreateUserRequestDto - Data to create the user.
+   * @param {CreateUserRequestDto} createUserRequestDto - Data to create the user.
    * @returns {Promise<User>} A promise resolving to the created user.
    */
   @Post()
   @Public()
-  create(@Body() createUserRequestDto: CreateUserRequestDto): Promise<User> {
-    return this.userService.create(createUserRequestDto);
+  async create(@Body() createUserRequestDto: CreateUserRequestDto): Promise<User>{
+    const result = await this.userService.create(createUserRequestDto);
+    if (result.isLeft()){
+      throw new BadRequestException(result.value.message)
+    }
+    return result.value;
   }
 
   /**
    * Endpoint for retrieving a user by ID.
    * @param {string} userId - The ID of the user to retrieve.
-   * @returns {Promise<User | null>} A promise resolving to the user if found, or null if not found.
+   * @returns {Promise<User>} A promise resolving to the user if found, or null if not found.
    */
   @Get(':id')
-  getById(@Param('id') userId: string): Promise<User | null> {
-    return this.userService.getById(userId);
+  async getById(@Param('id') userId: string): Promise<User> {
+    const result = await this.userService.getById(userId);
+    if (result.isLeft()){
+      throw new NotFoundException(result.value.message)
+    }
+    return result.value;
   }
 
   /**
    * Endpoint for updating an existing user.
    * @param {string} userId - The ID of the user to update.
    * @param {UpdateUserRequestDto} updateUserRequestDto - Data to update the user.
-   * @returns {Promise<User | null>} A promise resolving to the updated user if found and updated, or null if not found.
+   * @returns {Promise<User>} A promise resolving to the updated user if found and updated, or null if not found.
    */
   @Put(':id')
-  update(@Param('id') userId: string, @Body() updateUserRequestDto: UpdateUserRequestDto): Promise<User | null> {
-    return this.userService.update(userId, updateUserRequestDto);
+  async update(@Param('id') userId: string, @Body() updateUserRequestDto: UpdateUserRequestDto): Promise<User> {
+    const result = await this.userService.update(userId, updateUserRequestDto);
+    if (result.isLeft()){
+      throw new BadRequestException(result.value.message)
+    }
+    return result.value;
   }
 
   /**
@@ -55,8 +69,12 @@ export class UsersController implements AbstractUsersController{
    * @returns {Promise<boolean>} A promise resolving to true if the user was deleted successfully, false otherwise.
    */
   @Delete(':id')
-  delete(@Param('id') userId: string): Promise<boolean> {
-    return this.userService.delete(userId);
+  async delete(@Param('id') userId: string): Promise<boolean> {
+    const result = await this.userService.delete(userId);
+    if (result.isLeft()){
+      throw new BadRequestException(result.value.message)
+    }
+    return result.value
   }
 
   /**
@@ -64,7 +82,11 @@ export class UsersController implements AbstractUsersController{
    * @returns {Promise<User[]>} A promise resolving to an array of all users.
    */
   @Get()
-  getAll(): Promise<User[]> {
-    return this.userService.getAll();
+  async getAll(): Promise<User[]> {
+    const result = await this.userService.getAll();
+    if (result.isLeft()){
+      throw new NotFoundException(result.value.message)
+    }
+    return result.value;
   }
 }

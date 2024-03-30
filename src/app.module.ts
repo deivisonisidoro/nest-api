@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { UsersModule } from './presentation/modules/users.module';
 import { AuthModule } from './presentation/modules/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './infra/database/prisma.module';
+import { ErrorMiddleware } from './presentation/middlewares/ErrorMiddleware';
 
 @Module({
   imports: [
@@ -16,4 +17,8 @@ import { PrismaModule } from './infra/database/prisma.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ErrorMiddleware).forRoutes('*');
+  }
+}

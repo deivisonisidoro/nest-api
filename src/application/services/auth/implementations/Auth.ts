@@ -1,9 +1,11 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { AbstractUserService } from '../../user/User';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AbstractAuthService } from '../Auth';
+import { AbstractAuthService, LoginResponse } from '../Auth';
 import { AbstractPasswordHasher } from '../../../providers/PasswordHasher';
 import { AuthErrorMessageEnum } from '../../../../domain/enums/auth/ErrorMessage';
+import { left, right } from '../../../../domain/utils/either/either';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
+import { AbstractUserRepository } from '../../../../application/repositories/User';
 
 /**
  * Service responsible for authentication operations.
@@ -11,7 +13,7 @@ import { AuthErrorMessageEnum } from '../../../../domain/enums/auth/ErrorMessage
 @Injectable()
 export class AuthService implements AbstractAuthService {
   constructor(
-    private usersService: AbstractUserService,
+    private userRepository: AbstractUserRepository,
     private jwtService: JwtService,
     private passwordHasher: AbstractPasswordHasher,
   ) {}
@@ -20,28 +22,27 @@ export class AuthService implements AbstractAuthService {
    * Signs in a user and generates an access token.
    * @param {string} email - The user's email.
    * @param {string} pass - The user's password.
-   * @returns {Promise<{ access_token: string }>} A promise resolving to an object containing the access token.
-   * @throws {UnauthorizedException} Thrown if the provided credentials are invalid.
+   * @returns {Promise<LoginResponse>} A promise resolving to an object containing the access token.
    */
   async signIn(
     email: string,
     pass: string,
-  ): Promise<{ access_token: string }> {
-    const user = await this.usersService.getByEmail(email);
+  ): Promise<LoginResponse> {
+    const user = await this.userRepository.getUserByEmail(email);
     
     if (!user) {
-      throw new BadRequestException(AuthErrorMessageEnum.EmailOrPasswordWrong);
+      return left(new RequiredParametersError(AuthErrorMessageEnum.EmailOrPasswordWrong));
     }
     const passwordMatch = await this.passwordHasher.comparePasswords(
       pass,
       user.password,
     )
     if (!passwordMatch) {
-      throw new UnauthorizedException(AuthErrorMessageEnum.EmailOrPasswordWrong);
+      return left(new RequiredParametersError(AuthErrorMessageEnum.EmailOrPasswordWrong));
     }
     const payload = { sub: user.id, email: user.email };
-    return {
+    return right({
       access_token: await this.jwtService.signAsync(payload),
-    };
+    });
   }
 }

@@ -1,11 +1,12 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '../../../../domain/entities/User';
+import { Injectable } from '@nestjs/common';
 import { CreateUserRequestDto } from '../../../../domain/dtos/user/Create';
 import { UpdateUserRequestDto } from '../../../../domain/dtos/user/Update';
-import { AbstractUserRepository } from '../../../repositories/User';
-import { AbstractUserService } from '../User';
 import { AbstractPasswordHasher } from '../../../../application/providers/PasswordHasher';
 import { UserErrorMessageEnum } from '../../../../domain/enums/user/ErrorMessage';
+import { AbstractUserRepository } from '../../../repositories/User';
+import { AbstractUserService, CreateUserResponse, DeleteUserResponse, GetUsersResponse, UserResponse } from '../User';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
+import { left, right } from '../../../../domain/utils/either/either';
 
 /**
  * Implementation of the service handling user operations.
@@ -27,27 +28,28 @@ export class UserService implements AbstractUserService {
    * @param {CreateUserRequestDto} createUserRequestDto - Data to create the user.
    * @returns {Promise<User>} A promise resolving to the created user.
    */
-  async create(createUserRequestDto: CreateUserRequestDto): Promise<User> {
+  async create(createUserRequestDto: CreateUserRequestDto): Promise<CreateUserResponse> {
     const userAlreadyExists = await this.userRepository.getUserByEmail(
       createUserRequestDto.email,
     )
     if (userAlreadyExists){
-      throw new BadRequestException(UserErrorMessageEnum.UserAlreadyExists);
+      return left(new RequiredParametersError(UserErrorMessageEnum.UserAlreadyExists, 400));
     }
     const passwordHashed = await this.passwordHasher.hashPassword(createUserRequestDto.password)
-    return this.userRepository.createUser({...createUserRequestDto, password: passwordHashed});
+    const user = await this.userRepository.createUser({...createUserRequestDto, password: passwordHashed});
+    return right(user)
   }
 
   /**
    * Retrieves all users.
    * @returns {Promise<User[]>} A promise resolving to an array of all users.
    */
-  async getAll(): Promise<User[]> {
+  async getAll(): Promise<GetUsersResponse> {
     const users = await this.userRepository.getAllUsers();
     if(users.length === 0){
-      throw new NotFoundException(UserErrorMessageEnum.UserNotFound);
+      return  left(new RequiredParametersError(UserErrorMessageEnum.UserNotFound, 404));
     }
-    return users
+    return right(users)
   }
   
   /**
@@ -55,12 +57,12 @@ export class UserService implements AbstractUserService {
    * @param {string} userId - The ID of the user to retrieve.
    * @returns {Promise<User | null>} The user if found, or null if not found.
   */
-  async getById(userId: string): Promise<User | null> {
+  async getById(userId: string): Promise<UserResponse> {
     const user = await this.userRepository.getUserById(userId);
     if (!user){
-      throw new BadRequestException(UserErrorMessageEnum.UserDoesNotExist);
+      return left(new RequiredParametersError(UserErrorMessageEnum.UserDoesNotExist, 400));
     }
-   return user
+   return right(user)
   }
 
   /**
@@ -68,12 +70,12 @@ export class UserService implements AbstractUserService {
      * @param {string} email - The Email of the user to retrieve.
      * @returns {Promise<User | null>} The user if found, or null if not found.
     */
-  async getByEmail(email: string): Promise<User | null> {
+  async getByEmail(email: string): Promise<UserResponse> {
     const user = await this.userRepository.getUserByEmail(email);
     if (!user){
-      throw new BadRequestException(UserErrorMessageEnum.UserDoesNotExist);
+      return left(new RequiredParametersError(UserErrorMessageEnum.UserDoesNotExist, 400));
     }
-    return user;
+    return right(user);
   }
 
   /**
@@ -82,18 +84,18 @@ export class UserService implements AbstractUserService {
    * @param {UpdateUserRequestDto} updateUserRequestDto - The data to update the user.
    * @returns {Promise<User | null>} A promise resolving to the updated user if found and updated, or null if not found.
    */
-  async update(userId: string, updateUserRequestDto: UpdateUserRequestDto): Promise<User | null> {
-    const user = await this.userRepository.getUserByEmail(
-      updateUserRequestDto.email,
+  async update(userId: string, updateUserRequestDto: UpdateUserRequestDto): Promise<UserResponse> {
+    const user = await this.userRepository.getUserById(
+      userId,
     )
     if (!user) {
-      throw new BadRequestException(UserErrorMessageEnum.UserDoesNotExist);
+      return left(new RequiredParametersError(UserErrorMessageEnum.UserDoesNotExist, 400));
     }
     if (updateUserRequestDto.password) {
       updateUserRequestDto.password = await this.passwordHasher.hashPassword(updateUserRequestDto.password)
     }
     const userUpdated = await this.userRepository.updateUser(userId, updateUserRequestDto);
-    return userUpdated
+    return right(userUpdated)
   }
 
   /**
@@ -101,12 +103,13 @@ export class UserService implements AbstractUserService {
    * @param {string} userId - The ID of the user to delete.
    * @returns {Promise<boolean>} A promise resolving to true if the user was deleted successfully, false otherwise.
    */
-  async delete(userId: string): Promise<boolean> {
+  async delete(userId: string): Promise<DeleteUserResponse> {
     const user = await this.userRepository.getUserById(userId);
     if (!user) {
-      throw new BadRequestException(UserErrorMessageEnum.UserDoesNotExist);
+      return left(new RequiredParametersError(UserErrorMessageEnum.UserDoesNotExist, 400));
     }
-    return await this.userRepository.deleteUser(userId);
+    const userIsDeleted = await this.userRepository.deleteUser(userId)
+    return right(userIsDeleted);
   }
 
 }

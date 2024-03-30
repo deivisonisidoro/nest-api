@@ -9,6 +9,7 @@ import * as request from 'supertest';
 import { PrismaService } from '../src/infra/database/prisma.service';
 import { AppModule } from '../src/app.module';
 import { UserErrorMessageEnum } from '../src/domain/enums/user/ErrorMessage';
+import { User } from '../src/domain/entities/User';
 
 /**
  * Describe block for UserController E2E tests.
@@ -16,6 +17,9 @@ import { UserErrorMessageEnum } from '../src/domain/enums/user/ErrorMessage';
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
+  let createdUserId: string;
+  let accessToken: string;
+
   const userData = {
     email: 'test@example.com',
     password: 'password',
@@ -26,7 +30,7 @@ describe('UserController (e2e)', () => {
   /**
    * Sets up the testing environment before each describe block.
    */
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -36,8 +40,22 @@ describe('UserController (e2e)', () => {
 
     app = moduleRef.createNestApplication();
     await app.init();
-  });
+    const response = await request(app.getHttpServer())
+      .post('/users')
+      .send(userData)
+      .expect(HttpStatus.CREATED);
 
+    createdUserId = response.body.id;
+    const loginResponse = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email: userData.email, password: userData.password })
+      .expect(HttpStatus.OK);
+
+    accessToken = loginResponse.body.access_token;
+  });
+  afterAll(async () => {
+    await app.close();
+  });
   /**
    * Describe block for testing user creation functionality.
    */
@@ -48,7 +66,12 @@ describe('UserController (e2e)', () => {
     it('should be able to create a new user', async () => {
       const response = await request(app.getHttpServer())
         .post('/users')
-        .send(userData)
+        .send({
+          email: 'newUser@example.com',
+          password: 'password',
+          firstName: 'Test',
+          lastName: 'User',
+        })
         .expect(HttpStatus.CREATED);
 
       expect(response.status).toBe(HttpStatus.CREATED);
@@ -59,9 +82,6 @@ describe('UserController (e2e)', () => {
      * Test case to verify that it's not possible to create an existing user.
      */
     it('should not be able to create an existing user', async () => {
-      await request(app.getHttpServer())
-        .post('/users')
-        .send(userData);
       const response = await request(app.getHttpServer())
         .post('/users')
         .send(userData);
@@ -79,18 +99,9 @@ describe('UserController (e2e)', () => {
      * Test case to verify the ability to update the password of an existing user.
      */
     it('Should be able to update password of an existing user', async () => {
-      const { body } = await request(app.getHttpServer())
-      .post('/users')
-      .send(userData);
-      
-      const loginReq = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({ email: userData.email, password: userData.password })
-      const token = loginReq.body.access_token;
-      
       const response = await request(app.getHttpServer())
-        .put(`/users/${body.id}`)
-        .set('Authorization', 'Bearer ' + token)
+        .put(`/users/${createdUserId}`)
+        .set('Authorization', 'Bearer ' + accessToken)
         .send({
           ...userData,
           password: '123',
@@ -103,18 +114,9 @@ describe('UserController (e2e)', () => {
      * Test case to verify that it's not possible to update a non-existing user.
      */
     it('Should not be able to update an not existing user', async () => {
-      await request(app.getHttpServer())
-      .post('/users')
-      .send(userData);
-      
-      const loginReq = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({ email: userData.email, password: userData.password })
-
-      const token = loginReq.body.access_token;
       const response = await request(app.getHttpServer())
         .patch('/users/:id')
-        .set('Authorization', 'Bearer ' + token)
+        .set('Authorization', 'Bearer ' + accessToken)
         .send({
           email: 'testUpdatedExisting@test.com.br',
         });
@@ -131,18 +133,9 @@ describe('UserController (e2e)', () => {
      * Test case to verify the ability to get a list of users.
      */
     it('Should be able to get a list of users', async () => {
-      await request(app.getHttpServer())
-        .post('/users')
-        .send(userData);
-        
-      const loginReq = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({ email: userData.email, password: userData.password })
-  
-      const token = loginReq.body.access_token;
       const response = await request(app.getHttpServer())
         .get('/users')
-        .set('Authorization', 'Bearer ' + token);
+        .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.OK);
     });
@@ -151,19 +144,10 @@ describe('UserController (e2e)', () => {
      * Test case to verify the ability to get a user.
      */
     it('Should be able to get user', async () => {
-      const { body } = await request(app.getHttpServer())
-        .post('/users')
-        .send(userData);
-        
-      const loginReq = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({ email: userData.email, password: userData.password })
-  
-      const token = loginReq.body.access_token;
 
       const response = await request(app.getHttpServer())
-        .get(`/users/${body.id}`)
-        .set('Authorization', 'Bearer ' + token);
+        .get(`/users/${createdUserId}`)
+        .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.OK);
     });
@@ -172,21 +156,11 @@ describe('UserController (e2e)', () => {
      * Test case to verify that it's not possible to get a user.
      */
     it('Should not be able to get user', async () => {
-      await request(app.getHttpServer())
-        .post('/users')
-        .send(userData);
-        
-      const loginReq = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({ email: userData.email, password: userData.password })
-
-      const token = loginReq.body.access_token;
-      
       const response = await request(app.getHttpServer())
         .get(`/users/:id`)
-        .set('Authorization', 'Bearer ' + token);
+        .set('Authorization', 'Bearer ' + accessToken);
 
-      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
     });
   });
 
@@ -198,18 +172,9 @@ describe('UserController (e2e)', () => {
      * Test case to verify the ability to delete an existing user.
      */
     it('Should be able to delete an existing user', async () => {
-      const { body } = await request(app.getHttpServer())
-        .post('/users')
-        .send(userData);
-
-      const loginReq = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({ email: userData.email, password: userData.password })
-  
-      const token = loginReq.body.access_token;
       const response = await request(app.getHttpServer())
-        .delete(`/users/${body.id}`)
-        .set('Authorization', 'Bearer ' + token);
+        .delete(`/users/${createdUserId}`)
+        .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.OK);
     });
@@ -218,18 +183,9 @@ describe('UserController (e2e)', () => {
      * Test case to verify that it's not possible to delete an existing user when userId is wrong.
      */
     it('Should not be able to delete an existing user when userId is wrong', async () => {
-      await request(app.getHttpServer())
-        .post('/users')
-        .send(userData);
-        
-      const loginReq = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({ email: userData.email, password: userData.password })
-  
-      const token = loginReq.body.access_token;
       const response = await request(app.getHttpServer())
         .delete('/users/testID')
-        .set('Authorization', 'Bearer ' + token);
+        .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });

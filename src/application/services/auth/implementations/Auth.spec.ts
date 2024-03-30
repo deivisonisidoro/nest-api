@@ -1,24 +1,31 @@
 import { AuthService } from '../implementations/Auth';
-import { AbstractUserService } from '../../user/User';
 import { JwtService } from '@nestjs/jwt';
 import { AbstractPasswordHasher } from '../../../providers/PasswordHasher';
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { AuthErrorMessageEnum } from '../../../../domain/enums/auth/ErrorMessage';
+import { AbstractUserRepository } from '../../../../application/repositories/User';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
+import { left } from '../../../../domain/utils/either/either';
 
 /**
  * Unit tests for the AuthService class.
  */
 describe('AuthService', () => {
   let authService: AuthService;
-  let userService: AbstractUserService;
+  let userRepository: AbstractUserRepository;
   let jwtService: JwtService;
   let passwordHasher: AbstractPasswordHasher;
+  const emailOrPasswordWrong = left(new RequiredParametersError(AuthErrorMessageEnum.EmailOrPasswordWrong));
 
   beforeEach(() => {
     // Initialize mock instances
-    userService = {
-      getByEmail: jest.fn(),
-    } as unknown as AbstractUserService;
+    userRepository = {
+      getUserByEmail: jest.fn(),
+      createUser: jest.fn(),
+      getAllUsers: jest.fn(),
+      getUserById: jest.fn(),
+      updateUser: jest.fn(),
+      deleteUser: jest.fn(),
+    } as unknown as AbstractUserRepository;
 
     jwtService = {
       signAsync: jest.fn(),
@@ -29,7 +36,7 @@ describe('AuthService', () => {
     } as unknown as AbstractPasswordHasher;
 
     // Initialize AuthService instance
-    authService = new AuthService(userService, jwtService, passwordHasher);
+    authService = new AuthService(userRepository, jwtService, passwordHasher);
   });
 
   /**
@@ -46,14 +53,14 @@ describe('AuthService', () => {
         password: 'hashedPassword',
       };
 
-      (userService.getByEmail as jest.Mock).mockResolvedValue(mockUser);
+      (userRepository.getUserByEmail as jest.Mock).mockResolvedValue(mockUser);
       (passwordHasher.comparePasswords as jest.Mock).mockResolvedValue(true);
       (jwtService.signAsync as jest.Mock).mockResolvedValue('mockAccessToken');
 
       const result = await authService.signIn('test@example.com', 'password');
 
-      expect(result).toEqual({ access_token: 'mockAccessToken' });
-      expect(userService.getByEmail).toHaveBeenCalledWith('test@example.com');
+      expect(result.value).toEqual({ access_token: 'mockAccessToken' });
+      expect(userRepository.getUserByEmail).toHaveBeenCalledWith('test@example.com');
       expect(passwordHasher.comparePasswords).toHaveBeenCalledWith('password', 'hashedPassword');
       expect(jwtService.signAsync).toHaveBeenCalledWith({ sub: 1, email: 'test@example.com' });
     });
@@ -62,12 +69,10 @@ describe('AuthService', () => {
      * Test case to verify throwing BadRequestException when user with provided email does not exist.
      */
     it('should throw BadRequestException if user with provided email does not exist', async () => {
-      (userService.getByEmail as jest.Mock).mockResolvedValue(undefined);
-
-      await expect(authService.signIn('nonexistent@example.com', 'password')).rejects.toThrow(BadRequestException);
-      await expect(authService.signIn('nonexistent@example.com', 'password')).rejects.toThrow(
-        new BadRequestException(AuthErrorMessageEnum.EmailOrPasswordWrong)
-      );
+      (userRepository.getUserByEmail as jest.Mock).mockResolvedValue(undefined);
+      const result = await authService.signIn('nonexistent@example.com', 'password')
+      
+      expect(result.value).toStrictEqual( emailOrPasswordWrong.value);
     });
 
     /**
@@ -80,13 +85,11 @@ describe('AuthService', () => {
         password: 'hashedPassword',
       };
       
-      (userService.getByEmail as jest.Mock).mockResolvedValue(mockUser);
+      (userRepository.getUserByEmail as jest.Mock).mockResolvedValue(mockUser);
       (passwordHasher.comparePasswords as jest.Mock).mockResolvedValue(false);
-
-      await expect(authService.signIn('test@example.com', 'incorrectPassword')).rejects.toThrow(UnauthorizedException);
-      await expect(authService.signIn('test@example.com', 'incorrectPassword')).rejects.toThrow(
-        new UnauthorizedException(AuthErrorMessageEnum.EmailOrPasswordWrong)
-      );
+      const result = await authService.signIn('test@example.com', 'incorrectPassword')
+      
+      expect(result.value).toStrictEqual( emailOrPasswordWrong.value);
     });
   });
 });

@@ -6,6 +6,8 @@ import { User } from '../../../../domain/entities/User';
 import { CreateUserRequestDto } from '../../../../domain/dtos/user/Create';
 import { UpdateUserRequestDto } from '../../../../domain/dtos/user/Update';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
+import { left } from '../../../../domain/utils/either/either';
 
 
 /**
@@ -15,6 +17,9 @@ describe('UserService', () => {
   let userService: UserService;
   let userRepository: AbstractUserRepository;
   let passwordHasher: AbstractPasswordHasher;
+  const userDoesNotExist = left(new RequiredParametersError(UserErrorMessageEnum.UserDoesNotExist, 400));
+  const userNotFound = left(new RequiredParametersError(UserErrorMessageEnum.UserNotFound, 404));
+  const userAlreadyExists = left(new RequiredParametersError(UserErrorMessageEnum.UserAlreadyExists, 400));
   const createUserRequestDto: CreateUserRequestDto = {
     email: 'test@example.com',
     password: 'password',
@@ -64,7 +69,7 @@ describe('UserService', () => {
 
       const result = await userService.create(createUserRequestDto);
 
-      expect(result).toEqual(mockUser);
+      expect(result.value).toEqual(mockUser);
       expect(userRepository.getUserByEmail).toHaveBeenCalledWith('test@example.com');
       expect(passwordHasher.hashPassword).toHaveBeenCalledWith('password');
     });
@@ -74,9 +79,8 @@ describe('UserService', () => {
      */
     it('should throw BadRequestException if user with provided email already exists', async () => {
       (userRepository.getUserByEmail as jest.Mock).mockResolvedValue({ id: '1', email: 'test@example.com' });
-
-      await expect(userService.create(createUserRequestDto)).rejects.toThrow(BadRequestException);
-      await expect(userService.create(createUserRequestDto)).rejects.toThrow(UserErrorMessageEnum.UserAlreadyExists);
+      const result = await userService.create(createUserRequestDto)
+      expect(result.value).toStrictEqual(userAlreadyExists.value);
     });
   });
 
@@ -90,16 +94,16 @@ describe('UserService', () => {
 
       const result = await userService.getAll();
 
-      expect(result).toEqual(mockUsers);
+      expect(result.value).toEqual(mockUsers);
     });
     /**
      * Test case to throw NotFoundException if no users found.
      */
     it('should throw NotFoundException if no users found', async () => {
       (userRepository.getAllUsers as jest.Mock).mockResolvedValue([]);
-
-      await expect(userService.getAll()).rejects.toThrow(NotFoundException);
-      await expect(userService.getAll()).rejects.toThrow(UserErrorMessageEnum.UserNotFound);
+      const result = await userService.getAll()
+      
+      expect(result.value).toStrictEqual(userNotFound.value);
     });
   });
 
@@ -113,7 +117,7 @@ describe('UserService', () => {
 
       const result = await userService.getById('1');
 
-      expect(result).toEqual(mockUser);
+      expect(result.value).toEqual(mockUser);
     });
 
     /**
@@ -121,9 +125,9 @@ describe('UserService', () => {
      */
     it('should throw BadRequestException if user with provided ID does not exist', async () => {
       (userRepository.getUserById as jest.Mock).mockResolvedValue(null);
-
-      await expect(userService.getById('1')).rejects.toThrow(BadRequestException);
-      await expect(userService.getById('1')).rejects.toThrow(UserErrorMessageEnum.UserDoesNotExist);
+      
+      const result = await userService.getById('1')
+      expect(result.value).toStrictEqual(userDoesNotExist.value);
     });
   });
 
@@ -136,16 +140,17 @@ describe('UserService', () => {
 
       const result = await userService.getByEmail('test@example.com');
 
-      expect(result).toEqual(mockUser);
+      expect(result.value).toEqual(mockUser);
     });
     /**
      * Test case to verify that a BadRequestException is thrown if the user with the provided email does not exist.
      */
     it('should throw BadRequestException if user with provided email does not exist', async () => {
       (userRepository.getUserByEmail as jest.Mock).mockResolvedValue(null);
-
-      await expect(userService.getByEmail('test@example.com')).rejects.toThrow(BadRequestException);
-      await expect(userService.getByEmail('test@example.com')).rejects.toThrow(UserErrorMessageEnum.UserDoesNotExist);
+      const userDoesNotExist = left(new RequiredParametersError(UserErrorMessageEnum.UserDoesNotExist, 400));
+      const result = await userService.getByEmail('test@example.com')
+      
+      expect(result.value).toStrictEqual(userDoesNotExist.value);
     });
   });
 
@@ -154,14 +159,14 @@ describe('UserService', () => {
      * Test case to verify that an existing user is updated.
      */
     it('should update existing user', async () => {
-      (userRepository.getUserByEmail as jest.Mock).mockResolvedValue(mockUser);
+      (userRepository.getUserById as jest.Mock).mockResolvedValue(mockUser);
       (passwordHasher.hashPassword as jest.Mock).mockResolvedValue('hashedPassword');
       (userRepository.updateUser as jest.Mock).mockResolvedValue(updateUserRequestDto);
-
+      
       const result = await userService.update('1', updateUserRequestDto);
 
-      expect(result).toEqual(updateUserRequestDto);
-      expect(userRepository.getUserByEmail).toHaveBeenCalledWith('newemail@example.com');
+      expect(result.value).toEqual(updateUserRequestDto);
+      expect(userRepository.getUserById).toHaveBeenCalledWith('1');
       expect(passwordHasher.hashPassword).toHaveBeenCalledWith('newpassword');
       expect(userRepository.updateUser).toHaveBeenCalledWith('1', updateUserRequestDto);
     });
@@ -170,9 +175,9 @@ describe('UserService', () => {
    */
     it('should throw BadRequestException if user with provided email does not exist', async () => {
       (userRepository.getUserByEmail as jest.Mock).mockResolvedValue(null);
-
-      await expect(userService.update('1', updateUserRequestDto)).rejects.toThrow(BadRequestException);
-      await expect(userService.update('1', updateUserRequestDto)).rejects.toThrow(UserErrorMessageEnum.UserDoesNotExist);
+      
+      const result = await userService.update('1', updateUserRequestDto)
+      expect(result.value).toStrictEqual(userDoesNotExist.value);
     });
   });
 
@@ -186,7 +191,7 @@ describe('UserService', () => {
 
       const result = await userService.delete('1');
 
-      expect(result).toBe(true);
+      expect(result.value).toBe(true);
       expect(userRepository.deleteUser).toHaveBeenCalledWith('1');
     });
 
@@ -195,9 +200,10 @@ describe('UserService', () => {
      */
     it('should throw BadRequestException if user with provided ID does not exist', async () => {
       (userRepository.getUserById as jest.Mock).mockResolvedValue(null);
-
-      await expect(userService.delete('1')).rejects.toThrow(BadRequestException);
-      await expect(userService.delete('1')).rejects.toThrow(UserErrorMessageEnum.UserDoesNotExist);
+      
+      const result = await userService.delete('1')
+     
+      expect(result.value).toStrictEqual(userDoesNotExist.value);
     });
   });
 });

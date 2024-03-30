@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AbstractAuthService } from '../../../application/services/auth/Auth';
 import { LoginRequestDTO } from '../../../domain/dtos/auth/Login';
@@ -13,8 +13,12 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Public()
   @Post('login')
-  signIn(@Body() signInDto: LoginRequestDTO) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+  async signIn(@Body() signInDto: LoginRequestDTO) {
+    const result = await this.authService.signIn(signInDto.email, signInDto.password);
+    if(result.isLeft()){
+      throw new BadRequestException(result.value.message)
+    }
+    return result.value;
   }
   
   @UseGuards(AuthGuard)
