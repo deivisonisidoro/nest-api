@@ -1,6 +1,8 @@
 import { User } from '../../domain/entities/User';
 import { CreateUserRequestDto } from '../../domain/dtos/user/Create';
 import { UpdateUserRequestDto } from '../../domain/dtos/user/Update';
+import { ReadUsersRequestDto } from '../../domain/dtos/user/ReadUsers';
+import { ReadUserRequestDto } from '../../domain/dtos/user/ReadUser';
 
 /**
  * Abstract class defining the contract for a user repository providing CRUD operations.
@@ -14,18 +16,11 @@ export abstract class AbstractUserRepository {
   abstract createUser(createUserRequestDto: CreateUserRequestDto): Promise<User>;
 
   /**
-   * Retrieves a user by ID.
-   * @param {string} userId - The ID of the user to retrieve.
+   * Retrieves a user.
+   * @param {ReadUserRequestDto} data - The data of the user to retrieve.
    * @returns {Promise<User | null>} The user if found, or null if not found.
    */
-  abstract getUserById(userId: string): Promise<User | null>;
-  
-  /**
-   * Retrieves a user by Email.
-   * @param {string} email - The Email of the user to retrieve.
-   * @returns {Promise<User | null>} The user if found, or null if not found.
-   */
-  abstract getUserByEmail(email: string): Promise<User | null>;
+  abstract getUser(data: ReadUserRequestDto): Promise<User | null>;
 
   /**
    * Updates a user.
@@ -44,7 +39,8 @@ export abstract class AbstractUserRepository {
 
   /**
    * Retrieves all users.
+   * @param {ReadUsersRequestDto} data - The data of the user to retrieve.
    * @returns {Promise<User[]>} A promise resolving to an array of all users.
    */
-  abstract getAllUsers(): Promise<User[]>;
+  abstract getUsers(data: ReadUsersRequestDto): Promise<User[]>;
 }

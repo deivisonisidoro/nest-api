@@ -1,3 +1,4 @@
+import { ReadUsersRequestDto } from 'src/domain/dtos/user/ReadUsers';
 import { CreateUserRequestDto } from '../../domain/dtos/user/Create';
 import { UpdateUserRequestDto } from '../../domain/dtos/user/Update';
 import { User } from '../../domain/entities/User';
@@ -8,16 +9,17 @@ import { User } from '../../domain/entities/User';
 export abstract class AbstractUsersController {
   /**
    * Endpoint for creating a new user.
-   * @param {CreateUserRequestDto} CreateUserRequestDto - Data to create the user.
+   * @param {CreateUserRequestDto} createUserRequestDto - Data to create the user.
    * @returns {Promise<User>} A promise resolving to the created user.
    */
-  abstract create(CreateUserRequestDto: CreateUserRequestDto): Promise<User>;
+  abstract create(createUserRequestDto: CreateUserRequestDto): Promise<User>;
 
   /**
    * Endpoint for retrieving all users.
+   * @param {ReadUsersRequestDto} query - The data containing parameters for users retrieval, such as filters and pagination settings.
    * @returns {Promise<User[]>} A promise resolving to an array of all users.
    */
-  abstract getAll(): Promise<User[]>;
+  abstract getAll(query: ReadUsersRequestDto): Promise<User[]>;
   
   /**
    * Endpoint for retrieving a user by ID.
@@ -29,10 +31,10 @@ export abstract class AbstractUsersController {
   /**
    * Endpoint for updating an existing user.
    * @param {string} userId - The ID of the user to update.
-   * @param {UpdateUserRequestDto} UpdateUserRequestDto - Data to update the user.
+   * @param {UpdateUserRequestDto} updateUserRequestDto - Data to update the user.
    * @returns {Promise<User | null>} A promise resolving to the updated user if found and updated, or null if not found.
    */
-  abstract update(userId: string, UpdateUserRequestDto: UpdateUserRequestDto): Promise<User | null>;
+  abstract update(userId: string, updateUserRequestDto: UpdateUserRequestDto): Promise<User | null>;
 
   /**
    * Endpoint for deleting a user by ID.

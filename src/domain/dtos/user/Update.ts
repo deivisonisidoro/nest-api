@@ -1,45 +1,53 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 
 /**
  * DTO (Data Transfer Object) for updating a user.
  */
 export class UpdateUserRequestDto {
-  @ApiProperty({ 
-    required: false,
-    description: "The new email of the user. Optional."
-  })
-  @IsEmail()
+  /**
+   * The new email of the user.
+   *
+   * @type {string}
+   * @memberof UpdateUserRequestDto
+   * @example 'user@example.com'
+   */
+  @IsEmail({}, { message: 'Invalid email format' })
   email?: string;
   
-  @ApiProperty({ 
-    required: false,
-    description: "The new first name of the user. Optional."
-  })
+  /**
+   * The new first name of the user.
+   *
+   * @type {string}
+   * @memberof UpdateUserRequestDto
+   * @example 'John'
+   */
   firstName?: string;
   
-
-  @ApiProperty({ 
-    required: false, 
-    description: "The new last name of the user. Optional."
- })
+  /**
+   * The new last name of the user.
+   *
+   * @type {string}
+   * @memberof UpdateUserRequestDto
+   * @example 'Doe'
+   */
   lastName?: string;
   
-
-  @ApiProperty({ 
-    required: false,
-    description:  "The new password of the user."
-  })
-  @MinLength(8)
+  /**
+   * The new password of the user.
+   *
+   * @type {string}
+   * @memberof UpdateUserRequestDto
+   * @example 'newpassword123'
+   */
+  @MinLength(8, { message: 'Password must be at least 8 characters long' })
   password?: string;
 
   /**
    * Creates an instance of UpdateUserRequestDto.
-   * @param id - The ID of the user to be updated.
-   * @param email - The new email of the user.
-   * @param firstName - The new first name of the user.
-   * @param lastName - The new last name of the user.
-   * @param password - The new password of the user.
+   * @param {string} email - The new email of the user.
+   * @param {string} firstName - The new first name of the user.
+   * @param {string} lastName - The new last name of the user.
+   * @param {string} password - The new password of the user.
    */
   constructor(email?: string, firstName?: string, lastName?: string, password?: string) {
     if (email) this.email = email;

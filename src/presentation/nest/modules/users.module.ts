@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
-
-import { UsersController } from '../controllers/user/User';
-import { PrismaUserRepository } from '../../../infra/repositories/PrismaUser';
+import { AbstractPasswordHasher } from '../../../application/providers/PasswordHasher';
 import { AbstractUserRepository } from '../../../application/repositories/User';
 import { PrismaService } from '../../../infra/database/nestPrisma/prisma.service';
-import { AbstractPasswordHasher } from '../../../application/providers/PasswordHasher';
 import { PasswordHasher } from '../../../infra/providers/PasswordHasher';
-import { AbstractUserService } from '../../../application/services/User';
-import { UserService } from '../services/User';
+import { PrismaUserRepository } from '../../../infra/repositories/PrismaUser';
+import { UsersController } from '../controllers/user/User';
+import { AbstractUserManager } from '../managers/User';
+import { UserManager } from '../managers/implementations/User';
+
 
 @Module({
   controllers: [UsersController],
   providers: [
     {
-      provide: AbstractUserService,
-      useClass: UserService
+      provide: AbstractUserManager,
+      useClass: UserManager
     },
     {
       provide: AbstractUserRepository,

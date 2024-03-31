@@ -1,11 +1,18 @@
-import { Controller, Post, Body, Get, Param, Put, Delete, BadRequestException, NotFoundException } from '@nestjs/common';
-import { CreateUserRequestDto } from '../../../../domain/dtos/user/Create';
-import { UpdateUserRequestDto } from '../../../../domain/dtos/user/Update';
-import { User } from '../../../../domain/entities/User';
-import { AbstractUsersController } from '../../../../application/controllers/User';
-import { ApiTags } from '@nestjs/swagger';
-import { Public } from '../../helpers/customDecorator/Public';
-import { AbstractUserService } from '../../../../application/services/User';
+import { Controller, Post, Body, BadRequestException, Get, Param, NotFoundException, Put, Delete, Query } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
+import { User } from "@prisma/client";
+
+
+import { AbstractUsersController } from "../../../../application/controllers/User";
+import { CreateUserRequestDto } from "../../../../domain/dtos/user/Create";
+import { ReadUsersRequestDto } from "../../../../domain/dtos/user/ReadUsers";
+import { UpdateUserRequestDto } from "../../../../domain/dtos/user/Update";
+import { AbstractUserManager } from "../../managers/User";
+import { Public } from "../../helpers/customDecorator/Public";
+
+
+
+
 
 
 /**
@@ -15,7 +22,7 @@ import { AbstractUserService } from '../../../../application/services/User';
 @Controller('users')
 export class UsersController implements AbstractUsersController{
   constructor(
-    private readonly userService: AbstractUserService
+    private readonly UserManager: AbstractUserManager
   ) {}
 
   /**
@@ -26,7 +33,7 @@ export class UsersController implements AbstractUsersController{
   @Post()
   @Public()
   async create(@Body() createUserRequestDto: CreateUserRequestDto): Promise<User>{
-    const result = await this.userService.create(createUserRequestDto);
+    const result = await this.UserManager.create(createUserRequestDto);
     if (result.isLeft()){
       throw new BadRequestException(result.value.message)
     }
@@ -40,7 +47,7 @@ export class UsersController implements AbstractUsersController{
    */
   @Get(':id')
   async getById(@Param('id') userId: string): Promise<User> {
-    const result = await this.userService.getById(userId);
+    const result = await this.UserManager.getById(userId);
     if (result.isLeft()){
       throw new NotFoundException(result.value.message)
     }
@@ -55,7 +62,7 @@ export class UsersController implements AbstractUsersController{
    */
   @Put(':id')
   async update(@Param('id') userId: string, @Body() updateUserRequestDto: UpdateUserRequestDto): Promise<User> {
-    const result = await this.userService.update(userId, updateUserRequestDto);
+    const result = await this.UserManager.update(userId, updateUserRequestDto);
     if (result.isLeft()){
       throw new BadRequestException(result.value.message)
     }
@@ -69,7 +76,7 @@ export class UsersController implements AbstractUsersController{
    */
   @Delete(':id')
   async delete(@Param('id') userId: string): Promise<boolean> {
-    const result = await this.userService.delete(userId);
+    const result = await this.UserManager.delete(userId);
     if (result.isLeft()){
       throw new BadRequestException(result.value.message)
     }
@@ -81,8 +88,8 @@ export class UsersController implements AbstractUsersController{
    * @returns {Promise<User[]>} A promise resolving to an array of all users.
    */
   @Get()
-  async getAll(): Promise<User[]> {
-    const result = await this.userService.getAll();
+  async getAll(@Query() query: ReadUsersRequestDto): Promise<User[]> {
+    const result = await this.UserManager.getAll(query);
     if (result.isLeft()){
       throw new NotFoundException(result.value.message)
     }

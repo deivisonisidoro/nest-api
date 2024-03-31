@@ -1,26 +1,49 @@
 import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
 
 /**
  * DTO (Data Transfer Object) for creating a user.
  */
 export class CreateUserRequestDto {
-  @ApiProperty({ description: 'The email address of the user. Required and must not be empty.' }) 
-  @IsNotEmpty()
-  @IsEmail() 
+  /**
+   * The email address of the user.
+   *
+   * @type {string}
+   * @memberof CreateUserRequestDto
+   * @example 'user@example.com'
+   */
+  @IsNotEmpty({ message: 'Email is required' })
+  @IsEmail({}, { message: 'Invalid email format' })
   email: string;
   
-  @ApiProperty({ description: 'The first name of the user. Required and must not be empty.' }) 
-  @IsNotEmpty()
+  /**
+   * The first name of the user.
+   *
+   * @type {string}
+   * @memberof CreateUserRequestDto
+   * @example 'John'
+   */
+  @IsNotEmpty({ message: 'First name is required' })
   firstName: string;
   
-  @ApiProperty({ description: 'The last name of the user. Required and must not be empty.' }) 
-  @IsNotEmpty() 
+  /**
+   * The last name of the user.
+   *
+   * @type {string}
+   * @memberof CreateUserRequestDto
+   * @example 'Doe'
+   */
+  @IsNotEmpty({ message: 'Last name is required' })
   lastName: string;
   
-  @ApiProperty({ description: 'The password of the user. Required and must not be empty.' })
-  @IsNotEmpty()
-  @MinLength(8)
+  /**
+   * The password of the user.
+   *
+   * @type {string}
+   * @memberof CreateUserRequestDto
+   * @example 'password123'
+   */
+  @IsNotEmpty({ message: 'Password is required' })
+  @MinLength(8, { message: 'Password must be at least 8 characters long' })
   password: string;
 
   /**

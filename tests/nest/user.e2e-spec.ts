@@ -138,6 +138,32 @@ describe('UserController (e2e)', () => {
 
       expect(response.status).toBe(HttpStatus.OK);
     });
+    
+    /**
+     * Test case to verify the ability to get a list of users with query parameters.
+     */
+    it('Should be able to get a list of users with query parameters', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .query({ firstName: userData.firstName, lastName: userData.lastName, email: userData.email })
+        .set('Authorization', 'Bearer ' + accessToken);
+
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body).toHaveLength(1); // Assuming one user matches the query parameters
+    });
+
+    /**
+     * Test case to verify that no users are found when using query parameters that don't match any users.
+     */
+    it('Should not find any users when using non-matching query parameters', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .query({ firstName: 'Nonexistent', lastName: 'User', email: 'nonexistent.user@example.com' })
+        .set('Authorization', 'Bearer ' + accessToken);
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+      expect(response.body.message).toBe(UserErrorMessageEnum.UserNotFound);
+    });
 
     /**
      * Test case to verify the ability to get a user.

@@ -3,18 +3,19 @@ import { ApiTags } from '@nestjs/swagger';
 import { LoginRequestDTO } from '../../../../domain/dtos/auth/Login';
 import { AuthGuard } from '../../guards/auth/auth.guard';
 import { Public } from '../../helpers/customDecorator/Public';
-import { AbstractAuthService } from '../../../../application/services/Auth';
+import { AbstractAuthManager } from '../../managers/Auth';
+
 
 @ApiTags("Auth")
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AbstractAuthService) {}
+  constructor(private authManager: AbstractAuthManager) {}
 
   @HttpCode(HttpStatus.OK)
   @Public()
   @Post('login')
   async signIn(@Body() signInDto: LoginRequestDTO) {
-    const result = await this.authService.signIn(signInDto.email, signInDto.password);
+    const result = await this.authManager.signIn(signInDto.email, signInDto.password);
     if(result.isLeft()){
       throw new BadRequestException(result.value.message)
     }

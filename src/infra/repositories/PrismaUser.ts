@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
-
+import { Prisma } from '@prisma/client';
 import { User } from '../../domain/entities/User';
 import { CreateUserRequestDto } from '../../domain/dtos/user/Create';
 import { UpdateUserRequestDto } from '../../domain/dtos/user/Update';
 import { AbstractUserRepository } from '../../application/repositories/User';
 import { PrismaService } from '../database/nestPrisma/prisma.service'; 
+import { ReadUserRequestDto } from 'src/domain/dtos/user/ReadUser';
+import { ReadUsersRequestDto } from 'src/domain/dtos/user/ReadUsers';
 
 /**
  * Implementation of UserRepository using Prisma as the data source.
@@ -37,42 +39,46 @@ export class PrismaUserRepository implements AbstractUserRepository {
   }
 
   /**
-   * Retrieves all users.
-   * @returns {Promise<User[]>} A promise resolving to an array of all users.
+   * Retrieves a user based on the provided data.
+   * @param {ReadUsersRequestDto} data - The data of the user to retrieve.
+   * @returns {Promise<User | null>} The user if found, or null if not found.
    */
-  async getAllUsers(): Promise<User[]> {
-    const users = await this.prisma.user.findMany();
+  async getUser(data: ReadUserRequestDto): Promise<User | null> {
+    const { email, id} = data;
+
+    let where: Prisma.UserWhereUniqueInput = {
+      ...(email && { email }),
+      ...(id && { id }),
+    };
+
+    if (id) where.id = id;
+    else if (email) where.email = email;
+
+   
+    const user = await this.prisma.user.findUnique({ where });
+    return user ? this.mapPrismaUserToUserEntity(user) : null;
+     
+  }
+
+   /**
+   * Retrieves users based on the provided data.
+   * @param {ReadUsersRequestDto} data - The data to filter users.
+   * @returns {Promise<User[]>} An array of users that match the criteria.
+   */
+   async getUsers(data: ReadUsersRequestDto): Promise<User[]> {
+    const { email, id, firstName, lastName } = data;
+
+    const where: Prisma.UserWhereInput = {
+      ...(email && { email }),
+      ...(id && { id }),
+      ...(firstName && { firstName }),
+      ...(lastName && { lastName }),
+    };
+
+    const users = await this.prisma.user.findMany({ where });
+
     return users.map((user) => this.mapPrismaUserToUserEntity(user));
   }
-  
-  /**
-   * Retrieves a user by ID.
-   * @param {string} userId - The ID of the user to retrieve.
-   * @returns {Promise<User | null>} The user if found, or null if not found.
-   */
-  async getUserById(userId: string): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-    return user ? this.mapPrismaUserToUserEntity(user) : null;
-  }
-
-  /**
-   * Retrieves a user by email.
-   * @param {string} email - The email of the user to retrieve.
-   * @returns {Promise<User | null>} The user if found, or null if not found.
-   */
-  async getUserByEmail(email: string): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
-    return user ? this.mapPrismaUserToUserEntity(user) : null;
-  }
-
   /**
    * Updates a user.
    * @param {string} userId - The ID of the user to update.

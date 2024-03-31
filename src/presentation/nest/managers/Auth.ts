@@ -1,13 +1,9 @@
-import { Either } from "../../domain/utils/either/either";
-import { RequiredParametersError } from "../../domain/utils/errors/RequiredParametersError";
-
-
-export type LoginResponse = Either<RequiredParametersError, { access_token: string }>
+import { LoginResponse } from "src/application/useCases/auth/signIn/AbstractSingInUser";
 
 /**
  * Abstract service defining the contract for authentication operations.
  */
-export abstract class AbstractAuthService {
+export abstract class AbstractAuthManager {
   /**
    * Signs in a user and generates an access token.
    * @param {string} email - The user's email.
