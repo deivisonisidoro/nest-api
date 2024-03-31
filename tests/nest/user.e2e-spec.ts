@@ -7,8 +7,9 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 
 import { PrismaService } from '../../src/infra/database/nestPrisma/prisma.service';
-import { AppModule } from '../../src/app.module';
+
 import { UserErrorMessageEnum } from '../../src/domain/enums/user/ErrorMessage';
+import { AppModule } from '../../src/presentation/nest/app.module';
 
 /**
  * Describe block for UserController E2E tests.
