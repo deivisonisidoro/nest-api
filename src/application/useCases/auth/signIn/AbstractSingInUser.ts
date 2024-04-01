@@ -5,7 +5,7 @@ import { RequiredParametersError } from "../../../../domain/utils/errors/Require
 export type LoginResponse = Either<RequiredParametersError, { access_token: string }>
 
 /**
- * Abstract class for authenticating a user.
+ * Abstract class defining the contract for authenticating a user.
  *
  * @abstract
  * @class
@@ -15,9 +15,9 @@ export abstract class AbstractSingInUserUseCase {
   /**
    * Signs in a user and generates an access token.
    * @abstract
-   * @param {string} email - The user's email.
-   * @param {string} pass - The user's password.
+   * @param {string} email - The email of the user.
+   * @param {string} password - The password of the user.
    * @returns {Promise<LoginResponse>} A promise resolving to an object containing the access token.
    */
-  abstract execute(email: string, pass: string): Promise<LoginResponse>;
+  abstract execute(email: string, password: string): Promise<LoginResponse>;
 }

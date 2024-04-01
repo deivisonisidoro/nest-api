@@ -10,15 +10,15 @@ import { ReadUserRequestDto } from '../../domain/dtos/user/ReadUser';
 export abstract class AbstractUserRepository {
   /**
    * Creates a new user.
-   * @param {CreateUserRequestDto} createUserRequestDto - Data to create the user.
-   * @returns {Promise<User>} The created user.
+   * @param {CreateUserRequestDto} createUserRequestDto - Data required to create the user.
+   * @returns {Promise<User>} A promise resolving to the created user.
    */
   abstract createUser(createUserRequestDto: CreateUserRequestDto): Promise<User>;
 
   /**
    * Retrieves a user.
-   * @param {ReadUserRequestDto} data - The data of the user to retrieve.
-   * @returns {Promise<User | null>} The user if found, or null if not found.
+   * @param {ReadUserRequestDto} data - Data identifying the user to retrieve.
+   * @returns {Promise<User | null>} A promise resolving to the user if found, or null if not found.
    */
   abstract getUser(data: ReadUserRequestDto): Promise<User | null>;
 
@@ -26,21 +26,21 @@ export abstract class AbstractUserRepository {
    * Updates a user.
    * @param {string} userId - The ID of the user to update.
    * @param {UpdateUserRequestDto} updateUserRequestDto - Data to update the user.
-   * @returns {Promise<User | null>} The updated user if found and updated, or null if not found.
+   * @returns {Promise<User | null>} A promise resolving to the updated user if found and updated, or null if not found.
    */
   abstract updateUser(userId: string, updateUserRequestDto: UpdateUserRequestDto): Promise<User | null>;
 
   /**
    * Deletes a user by ID.
    * @param {string} userId - The ID of the user to delete.
-   * @returns {Promise<boolean>} True if the user was deleted successfully, false otherwise.
+   * @returns {Promise<boolean>} A promise resolving to true if the user was deleted successfully, false otherwise.
    */
   abstract deleteUser(userId: string): Promise<boolean>;
 
   /**
    * Retrieves all users.
-   * @param {ReadUsersRequestDto} data - The data of the user to retrieve.
-   * @returns {Promise<User[]>} A promise resolving to an array of all users.
+   * @param {ReadUsersRequestDto} data - Data containing parameters for user retrieval, such as filters and pagination settings.
+   * @returns {Promise<User[]>} A promise resolving to an array containing all users.
    */
   abstract getUsers(data: ReadUsersRequestDto): Promise<User[]>;
 }

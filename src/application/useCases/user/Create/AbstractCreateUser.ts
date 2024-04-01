@@ -8,7 +8,7 @@ export type CreateUserResponse = Either<RequiredParametersError, User>
 
 
 /**
- * Abstract class for the use case of creating a new user.
+ * Abstract class defining the contract for the use case of creating a new user.
  */
 export abstract class AbstractCreateUserUseCase {
 
@@ -16,8 +16,8 @@ export abstract class AbstractCreateUserUseCase {
    * Executes the create user use case.
    *
    * @async
-   * @param {CreateUserRequestDto} createUserRequestDto - The user creation request data.
-   * @returns {Promise<CreateUserResponse>} The response data.
+   * @param {CreateUserRequestDto} createUserRequestDto - Data representing the request to create a user.
+   * @returns {Promise<CreateUserResponse>} A promise resolving to the response data.
    */
   abstract execute(createUserRequestDto: CreateUserRequestDto): Promise<CreateUserResponse>;
 }

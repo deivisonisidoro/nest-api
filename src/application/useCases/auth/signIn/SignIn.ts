@@ -29,23 +29,23 @@ export class SignInUseCase implements AbstractSingInUserUseCase {
 
   /**
    * Signs in a user and generates an access token.
-   * @param {string} email - The user's email.
-   * @param {string} pass - The user's password.
+   * @param {string} email - The email of the user.
+   * @param {string} password - The password of the user.
    * @returns {Promise<LoginResponse>} A promise resolving to an object containing the access token.
    */
   async execute(
     email: string,
-    pass: string,
+    password: string,
   ): Promise<LoginResponse> {
-    const user = await this.userRepository.getUser({email});
+    const user = await this.userRepository.getUser({ email });
     
     if (!user) {
       return left(new RequiredParametersError(AuthErrorMessageEnum.EmailOrPasswordWrong));
     }
     const passwordMatch = await this.passwordHasher.comparePasswords(
-      pass,
+      password,
       user.password,
-    )
+    );
     if (!passwordMatch) {
       return left(new RequiredParametersError(AuthErrorMessageEnum.EmailOrPasswordWrong));
     }

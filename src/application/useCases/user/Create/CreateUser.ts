@@ -16,7 +16,7 @@ import { AbstractCreateUserUseCase, CreateUserResponse } from "./AbstractCreateU
  */
 export class CreateUserUseCase implements AbstractCreateUserUseCase {
   /**
-   * Creates an instance of AbstractCreateUserUseCase.
+   * Creates an instance of CreateUserUseCase.
    *
    * @constructor
    * @param {AbstractUserRepository} userRepository - The repository for user data.
@@ -31,18 +31,18 @@ export class CreateUserUseCase implements AbstractCreateUserUseCase {
    * Executes the create user use case.
    *
    * @async
-   * @param {CreateUserRequestDto} createUserRequestDto - The user creation request data.
-   * @returns {Promise<CreateUserResponse>} The response data.
+   * @param {CreateUserRequestDto} createUserRequestDto - Data representing the request to create a user.
+   * @returns {Promise<CreateUserResponse>} A promise resolving to the response data.
    */
   async execute(createUserRequestDto: CreateUserRequestDto): Promise<CreateUserResponse> {
     const userAlreadyExists = await this.userRepository.getUser(
-      {email: createUserRequestDto.email},
-    )
-    if (userAlreadyExists){
+      { email: createUserRequestDto.email },
+    );
+    if (userAlreadyExists) {
       return left(new RequiredParametersError(UserErrorMessageEnum.UserAlreadyExists, 400));
     }
-    const passwordHashed = await this.passwordHasher.hashPassword(createUserRequestDto.password)
+    const passwordHashed = await this.passwordHasher.hashPassword(createUserRequestDto.password);
     const user = await this.userRepository.createUser({...createUserRequestDto, password: passwordHashed});
-    return right(user)
+    return right(user);
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Abstract class for the provider responsible for hashing and comparing passwords.
+ * Abstract class defining a provider responsible for hashing passwords and comparing them.
  */
 export abstract class AbstractPasswordHasher {
   /**
