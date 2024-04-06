@@ -28,7 +28,10 @@
     }
   },
   "lint-staged": {
-    "*": "eslint \"{src,apps,libs,tests}/**/*.ts\" --fix"
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
