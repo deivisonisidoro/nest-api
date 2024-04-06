@@ -36,7 +36,6 @@ export class SignInUseCase implements AbstractSingInUserUseCase {
    */
   async execute(email: string, password: string): Promise<LoginResponse> {
     const user = await this.userRepository.getUser({ email });
-    console.log('Email');
     if (!user) {
       return left(
         new RequiredParametersError(AuthErrorMessageEnum.EmailOrPasswordWrong),
