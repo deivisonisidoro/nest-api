@@ -1,16 +1,20 @@
-# Set the version of docker compose to use
 version: '3.9'
 
-# The containers that compose the project
 services:
   dev-db:
     image: postgres:13
     ports:
       - 5432:5432
+    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
       POSTGRES_DB: nestjs
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env
+
   test-db:
     image: postgres:13
     ports:
@@ -19,3 +23,19 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
       POSTGRES_DB: nestjs
+    env_file:
+      - .env
+
+  nest-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.nest
+    ports:
+      - 3000:3000
+    depends_on:
+      - dev-db
+    environment:
+      - DATABASE_URL=postgresql://postgres:123@localhost:5432/nestjs?schema=public
+
+volumes:
+  pgdata: {}

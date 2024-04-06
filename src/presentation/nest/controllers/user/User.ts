@@ -1,6 +1,6 @@
 import { Controller, Post, Body, BadRequestException, Get, Param, NotFoundException, Put, Delete, Query } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { User } from "@prisma/client";
+
 
 import { AbstractUsersController } from "../../../../application/controllers/User";
 import { CreateUserRequestDto } from "../../../../domain/dtos/user/Create";
@@ -8,6 +8,7 @@ import { ReadUsersRequestDto } from "../../../../domain/dtos/user/ReadUsers";
 import { UpdateUserRequestDto } from "../../../../domain/dtos/user/Update";
 import { AbstractUserManager } from "../../managers/User";
 import { Public } from "../../helpers/customDecorator/Public";
+import { User } from "../../../../domain/entities/User";
 
 /**
  * Controller for handling user-related operations.

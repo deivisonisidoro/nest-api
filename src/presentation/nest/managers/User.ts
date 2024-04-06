@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 import { CreateUserResponse } from "src/application/useCases/user/Create/AbstractCreateUser";
 import { DeleteUserResponse } from "src/application/useCases/user/Delete/AbstractDeleteUser";
 import { UserResponse } from "src/application/useCases/user/Read/AbstractReadUser";
@@ -6,8 +5,6 @@ import { GetUsersResponse } from "src/application/useCases/user/Read/AbstractRea
 import { CreateUserRequestDto } from "src/domain/dtos/user/Create";
 import { ReadUsersRequestDto } from "src/domain/dtos/user/ReadUsers";
 import { UpdateUserRequestDto } from "src/domain/dtos/user/Update";
-import { Either } from "src/domain/utils/either/either";
-import { RequiredParametersError } from "src/domain/utils/errors/RequiredParametersError";
 
 
 

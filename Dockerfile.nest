@@ -1,0 +1,16 @@
+# Base image
+FROM node:latest as base
+
+RUN npm install -g pnpm
+
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install
+
+COPY prisma ./prisma
+RUN npx prisma generate
+COPY . .
+RUN pnpm nest:build
+
+
+CMD [ "node", "dist/presentation/nest/main.js" ]

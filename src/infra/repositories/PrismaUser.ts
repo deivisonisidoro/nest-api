@@ -46,7 +46,7 @@ export class PrismaUserRepository implements AbstractUserRepository {
   async getUser(data: ReadUserRequestDto): Promise<User | null> {
     const { email, id} = data;
 
-    let where: Prisma.UserWhereUniqueInput = {
+    let where = {
       ...(email && { email }),
       ...(id && { id }),
     };
@@ -68,7 +68,7 @@ export class PrismaUserRepository implements AbstractUserRepository {
    async getUsers(data: ReadUsersRequestDto): Promise<User[]> {
     const { email, id, firstName, lastName } = data;
 
-    const where: Prisma.UserWhereInput = {
+    const where = {
       ...(email && { email }),
       ...(id && { id }),
       ...(firstName && { firstName }),
