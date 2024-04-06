@@ -1,7 +1,7 @@
-import { Either } from "../../../../domain/utils/either/either";
-import { RequiredParametersError } from "../../../../domain/utils/errors/RequiredParametersError";
-import { ReadUsersRequestDto } from "../../../../domain/dtos/user/ReadUsers";
-import { User } from "../../../../domain/entities/User";
+import { ReadUsersRequestDto } from '../../../../domain/dtos/user/ReadUsers';
+import { User } from '../../../../domain/entities/User';
+import { Either } from '../../../../domain/utils/either/either';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
 
 export type GetUsersResponse = Either<RequiredParametersError, User[]>;
 
@@ -12,8 +12,9 @@ export type GetUsersResponse = Either<RequiredParametersError, User[]>;
  * @class
  * @implements {AbstractReadUsersUseCase}
  */
-export abstract class AbstractReadUsersUseCase implements AbstractReadUsersUseCase {
-
+export abstract class AbstractReadUsersUseCase
+  implements AbstractReadUsersUseCase
+{
   /**
    * Executes the get all users use case.
    *

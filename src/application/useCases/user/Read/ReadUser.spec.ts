@@ -1,15 +1,18 @@
-import { ReadUserUseCase } from "./ReadUser";
-import { AbstractUserRepository } from "../../../repositories/User";
-import { ReadUserRequestDto } from "../../../../domain/dtos/user/ReadUser";
-import { UserErrorMessageEnum } from "../../../../domain/enums/user/ErrorMessage";
-import { RequiredParametersError } from "../../../../domain/utils/errors/RequiredParametersError";
-import { randomUUID } from "crypto";
-import { left } from "../../../../domain/utils/either/either";
+import { randomUUID } from 'crypto';
+
+import { ReadUserRequestDto } from '../../../../domain/dtos/user/ReadUser';
+import { UserErrorMessageEnum } from '../../../../domain/enums/user/ErrorMessage';
+import { left } from '../../../../domain/utils/either/either';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
+import { AbstractUserRepository } from '../../../repositories/User';
+import { ReadUserUseCase } from './ReadUser';
 
 describe('ReadUserUseCase', () => {
   let userRepository: AbstractUserRepository;
   let readUserUseCase: ReadUserUseCase;
-  const userNotFound = left(new RequiredParametersError(UserErrorMessageEnum.UserNotFound, 404));
+  const userNotFound = left(
+    new RequiredParametersError(UserErrorMessageEnum.UserNotFound, 404),
+  );
 
   beforeEach(() => {
     userRepository = {
@@ -21,10 +24,10 @@ describe('ReadUserUseCase', () => {
 
   it('should return user response when user exists', async () => {
     const mockUserResponse = { id: '1', name: 'John Doe' };
-    const mockReadUserRequestDto: ReadUserRequestDto = { 
+    const mockReadUserRequestDto: ReadUserRequestDto = {
       email: 'John.Doe@example.com',
-      id: randomUUID()
-     };
+      id: randomUUID(),
+    };
 
     (userRepository.getUser as jest.Mock).mockResolvedValue(mockUserResponse);
 
@@ -36,12 +39,12 @@ describe('ReadUserUseCase', () => {
   });
 
   it('should return error when user does not exist', async () => {
-    const mockReadUserRequestDto: ReadUserRequestDto = { 
+    const mockReadUserRequestDto: ReadUserRequestDto = {
       email: 'John.Doe@example.com',
-      id: randomUUID()
-     };
+      id: randomUUID(),
+    };
 
-     (userRepository.getUser as jest.Mock).mockResolvedValue(null);
+    (userRepository.getUser as jest.Mock).mockResolvedValue(null);
 
     const result = await readUserUseCase.execute(mockReadUserRequestDto);
 

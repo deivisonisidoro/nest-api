@@ -1,9 +1,10 @@
-import { Either } from "../../../../domain/utils/either/either";
-import { RequiredParametersError } from "../../../../domain/utils/errors/RequiredParametersError";
-import { ReadUserRequestDto } from "../../../../domain/dtos/user/ReadUser";
-import { User } from "src/domain/entities/User";
+import { User } from 'src/domain/entities/User';
 
-export type UserResponse = Either<RequiredParametersError, User | null>
+import { ReadUserRequestDto } from '../../../../domain/dtos/user/ReadUser';
+import { Either } from '../../../../domain/utils/either/either';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
+
+export type UserResponse = Either<RequiredParametersError, User | null>;
 
 /**
  * Abstract class for GetAllUserUseCase.

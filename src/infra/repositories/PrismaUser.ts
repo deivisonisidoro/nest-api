@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { User } from '../../domain/entities/User';
-import { CreateUserRequestDto } from '../../domain/dtos/user/Create';
-import { UpdateUserRequestDto } from '../../domain/dtos/user/Update';
+
 import { AbstractUserRepository } from '../../application/repositories/User';
-import { PrismaService } from '../database/nestPrisma/prisma.service'; 
-import { ReadUserRequestDto } from 'src/domain/dtos/user/ReadUser';
-import { ReadUsersRequestDto } from 'src/domain/dtos/user/ReadUsers';
+import { CreateUserRequestDto } from '../../domain/dtos/user/Create';
+import { ReadUserRequestDto } from '../../domain/dtos/user/ReadUser';
+import { ReadUsersRequestDto } from '../../domain/dtos/user/ReadUsers';
+import { UpdateUserRequestDto } from '../../domain/dtos/user/Update';
+import { User } from '../../domain/entities/User';
+import { PrismaService } from '../database/nestPrisma/prisma.service';
 
 /**
  * Implementation of UserRepository using Prisma as the data source.
@@ -44,9 +44,9 @@ export class PrismaUserRepository implements AbstractUserRepository {
    * @returns {Promise<User | null>} The user if found, or null if not found.
    */
   async getUser(data: ReadUserRequestDto): Promise<User | null> {
-    const { email, id} = data;
+    const { email, id } = data;
 
-    let where = {
+    const where = {
       ...(email && { email }),
       ...(id && { id }),
     };
@@ -54,18 +54,16 @@ export class PrismaUserRepository implements AbstractUserRepository {
     if (id) where.id = id;
     else if (email) where.email = email;
 
-   
     const user = await this.prisma.user.findUnique({ where });
     return user ? this.mapPrismaUserToUserEntity(user) : null;
-     
   }
 
-   /**
+  /**
    * Retrieves users based on the provided data.
    * @param {ReadUsersRequestDto} data - The data to filter users.
    * @returns {Promise<User[]>} An array of users that match the criteria.
    */
-   async getUsers(data: ReadUsersRequestDto): Promise<User[]> {
+  async getUsers(data: ReadUsersRequestDto): Promise<User[]> {
     const { email, id, firstName, lastName } = data;
 
     const where = {
@@ -85,7 +83,10 @@ export class PrismaUserRepository implements AbstractUserRepository {
    * @param {UpdateUserRequestDto} UpdateUserRequestDto - Data to update the user.
    * @returns {Promise<User | null>} The updated user if found and updated, or null if not found.
    */
-  async updateUser(userId: string, UpdateUserRequestDto: UpdateUserRequestDto): Promise<User | null> {
+  async updateUser(
+    userId: string,
+    UpdateUserRequestDto: UpdateUserRequestDto,
+  ): Promise<User | null> {
     const updatedUser = await this.prisma.user.update({
       where: {
         id: userId,
@@ -113,7 +114,6 @@ export class PrismaUserRepository implements AbstractUserRepository {
     });
     return !!deletedUser;
   }
-
 
   /**
    * Maps a Prisma user object to a User entity.

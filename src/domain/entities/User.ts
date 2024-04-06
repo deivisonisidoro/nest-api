@@ -18,7 +18,14 @@ export class User {
    * @param {string} password - The password of the user.
    * @param {Date} createdAt - The date and time when the user was created.
    */
-  constructor(id: string, email: string, firstName: string, lastName: string, password: string, createdAt: Date) {
+  constructor(
+    id: string,
+    email: string,
+    firstName: string,
+    lastName: string,
+    password: string,
+    createdAt: Date,
+  ) {
     this.id = id;
     this.email = email;
     this.firstName = firstName;

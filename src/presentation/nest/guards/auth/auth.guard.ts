@@ -7,6 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+
 import { IS_PUBLIC_KEY } from '../../helpers/customDecorator/Public';
 
 /**
@@ -14,7 +15,10 @@ import { IS_PUBLIC_KEY } from '../../helpers/customDecorator/Public';
  */
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private reflector: Reflector) {}
+  constructor(
+    private jwtService: JwtService,
+    private reflector: Reflector,
+  ) {}
 
   /**
    * Determines whether the request is allowed to proceed based on authentication status.
@@ -35,12 +39,9 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: process.env.SECRET_KEY,
-        }
-      );
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.SECRET_KEY,
+      });
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException();

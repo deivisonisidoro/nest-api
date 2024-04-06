@@ -11,9 +11,9 @@ export class RequiredParametersError extends Error {
    * @param {number} statusCode - The status code associated with the error (default is 500).
    */
   constructor(message: string, statusCode: number = 500) {
-      super(message);
-      this._message = message;
-      this._statusCode = statusCode;
+    super(message);
+    this._message = message;
+    this._statusCode = statusCode;
   }
 
   /**

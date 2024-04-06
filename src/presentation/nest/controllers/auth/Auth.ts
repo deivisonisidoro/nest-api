@@ -1,5 +1,16 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+
 import { LoginRequestDTO } from '../../../../domain/dtos/auth/Login';
 import { AuthGuard } from '../../guards/auth/auth.guard';
 import { Public } from '../../helpers/customDecorator/Public';
@@ -8,7 +19,7 @@ import { AbstractAuthManager } from '../../managers/Auth';
 /**
  * Controller for handling authentication-related endpoints.
  */
-@ApiTags("Auth")
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authManager: AbstractAuthManager) {}
@@ -22,13 +33,16 @@ export class AuthController {
   @Public()
   @Post('login')
   async signIn(@Body() signInDto: LoginRequestDTO) {
-    const result = await this.authManager.signIn(signInDto.email, signInDto.password);
-    if(result.isLeft()){
-      throw new BadRequestException(result.value.message)
+    const result = await this.authManager.signIn(
+      signInDto.email,
+      signInDto.password,
+    );
+    if (result.isLeft()) {
+      throw new BadRequestException(result.value.message);
     }
     return result.value;
   }
-  
+
   /**
    * Endpoint for retrieving user profile.
    * @param {Request} req - The request object.

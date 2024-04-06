@@ -1,23 +1,30 @@
-import { JwtService } from "@nestjs/jwt";
-import { AbstractPasswordHasher } from "../../../providers/PasswordHasher";
-import { AbstractUserRepository } from "../../../repositories/User";
-import { AuthErrorMessageEnum } from "../../../../domain/enums/auth/ErrorMessage";
-import { RequiredParametersError } from "../../../../domain/utils/errors/RequiredParametersError";
-import { left } from "../../../../domain/utils/either/either";
-import { SignInUseCase } from "./SignIn";
+import { JwtService } from '@nestjs/jwt';
+
+import { AuthErrorMessageEnum } from '../../../../domain/enums/auth/ErrorMessage';
+import { left } from '../../../../domain/utils/either/either';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
+import { AbstractPasswordHasher } from '../../../providers/PasswordHasher';
+import { AbstractUserRepository } from '../../../repositories/User';
+import { SignInUseCase } from './SignIn';
 
 describe('SignInUseCase', () => {
   let userRepository: AbstractUserRepository;
   let jwtService: JwtService;
   let passwordHasher: AbstractPasswordHasher;
   let signInUseCase: SignInUseCase;
-  const emailOrPasswordWrong = left(new RequiredParametersError(AuthErrorMessageEnum.EmailOrPasswordWrong));
+  const emailOrPasswordWrong = left(
+    new RequiredParametersError(AuthErrorMessageEnum.EmailOrPasswordWrong),
+  );
 
   beforeEach(() => {
     userRepository = {} as AbstractUserRepository;
     jwtService = {} as JwtService;
     passwordHasher = {} as AbstractPasswordHasher;
-    signInUseCase = new SignInUseCase(userRepository, jwtService, passwordHasher);
+    signInUseCase = new SignInUseCase(
+      userRepository,
+      jwtService,
+      passwordHasher,
+    );
   });
 
   describe('execute', () => {

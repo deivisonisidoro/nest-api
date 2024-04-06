@@ -17,5 +17,8 @@ export abstract class AbstractPasswordHasher {
    * @param {string} hashedPassword - The hashed password for comparison.
    * @returns {Promise<boolean>} A promise resolving to a boolean indicating whether the passwords match.
    */
-  abstract comparePasswords(password: string, hashedPassword: string): Promise<boolean>;
+  abstract comparePasswords(
+    password: string,
+    hashedPassword: string,
+  ): Promise<boolean>;
 }

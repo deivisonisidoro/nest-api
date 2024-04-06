@@ -1,7 +1,7 @@
-import { Either } from "../../../../domain/utils/either/either";
-import { RequiredParametersError } from "../../../../domain/utils/errors/RequiredParametersError";
-import { UpdateUserRequestDto } from "../../../../domain/dtos/user/Update";
-import { User } from "../../../../domain/entities/User";
+import { UpdateUserRequestDto } from '../../../../domain/dtos/user/Update';
+import { User } from '../../../../domain/entities/User';
+import { Either } from '../../../../domain/utils/either/either';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
 
 export type UserResponse = Either<RequiredParametersError, User | null>;
 
@@ -16,5 +16,8 @@ export abstract class AbstractUpdateUserUseCase {
    * @param {UpdateUserRequestDto} updateUserRequestDto - The updated user information.
    * @returns {Promise<UserResponse>} The response data containing the updated user information.
    */
-  abstract execute(userId: string, updateUserRequestDto: UpdateUserRequestDto): Promise<UserResponse>;
+  abstract execute(
+    userId: string,
+    updateUserRequestDto: UpdateUserRequestDto,
+  ): Promise<UserResponse>;
 }

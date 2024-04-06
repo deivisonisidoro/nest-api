@@ -1,24 +1,32 @@
-import { Controller, Post, Body, BadRequestException, Get, Param, NotFoundException, Put, Delete, Query } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  Controller,
+  Post,
+  Body,
+  BadRequestException,
+  Get,
+  Param,
+  NotFoundException,
+  Put,
+  Delete,
+  Query,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
-
-import { AbstractUsersController } from "../../../../application/controllers/User";
-import { CreateUserRequestDto } from "../../../../domain/dtos/user/Create";
-import { ReadUsersRequestDto } from "../../../../domain/dtos/user/ReadUsers";
-import { UpdateUserRequestDto } from "../../../../domain/dtos/user/Update";
-import { AbstractUserManager } from "../../managers/User";
-import { Public } from "../../helpers/customDecorator/Public";
-import { User } from "../../../../domain/entities/User";
+import { AbstractUsersController } from '../../../../application/controllers/User';
+import { CreateUserRequestDto } from '../../../../domain/dtos/user/Create';
+import { ReadUsersRequestDto } from '../../../../domain/dtos/user/ReadUsers';
+import { UpdateUserRequestDto } from '../../../../domain/dtos/user/Update';
+import { User } from '../../../../domain/entities/User';
+import { Public } from '../../helpers/customDecorator/Public';
+import { AbstractUserManager } from '../../managers/User';
 
 /**
  * Controller for handling user-related operations.
  */
-@ApiTags("Users")
+@ApiTags('Users')
 @Controller('users')
 export class UsersController implements AbstractUsersController {
-  constructor(
-    private readonly UserManager: AbstractUserManager
-  ) {}
+  constructor(private readonly UserManager: AbstractUserManager) {}
 
   /**
    * Endpoint for creating a new user.
@@ -27,7 +35,9 @@ export class UsersController implements AbstractUsersController {
    */
   @Post()
   @Public()
-  async create(@Body() createUserRequestDto: CreateUserRequestDto): Promise<User> {
+  async create(
+    @Body() createUserRequestDto: CreateUserRequestDto,
+  ): Promise<User> {
     const result = await this.UserManager.create(createUserRequestDto);
     if (result.isLeft()) {
       throw new BadRequestException(result.value.message);
@@ -56,7 +66,10 @@ export class UsersController implements AbstractUsersController {
    * @returns {Promise<User>} A promise resolving to the updated user if found and updated, otherwise null.
    */
   @Put(':id')
-  async update(@Param('id') userId: string, @Body() updateUserRequestDto: UpdateUserRequestDto): Promise<User> {
+  async update(
+    @Param('id') userId: string,
+    @Body() updateUserRequestDto: UpdateUserRequestDto,
+  ): Promise<User> {
     const result = await this.UserManager.update(userId, updateUserRequestDto);
     if (result.isLeft()) {
       throw new BadRequestException(result.value.message);

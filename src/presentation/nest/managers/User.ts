@@ -1,13 +1,10 @@
-import { CreateUserResponse } from "src/application/useCases/user/Create/AbstractCreateUser";
-import { DeleteUserResponse } from "src/application/useCases/user/Delete/AbstractDeleteUser";
-import { UserResponse } from "src/application/useCases/user/Read/AbstractReadUser";
-import { GetUsersResponse } from "src/application/useCases/user/Read/AbstractReadUsers";
-import { CreateUserRequestDto } from "src/domain/dtos/user/Create";
-import { ReadUsersRequestDto } from "src/domain/dtos/user/ReadUsers";
-import { UpdateUserRequestDto } from "src/domain/dtos/user/Update";
-
-
-
+import { CreateUserResponse } from 'src/application/useCases/user/Create/AbstractCreateUser';
+import { DeleteUserResponse } from 'src/application/useCases/user/Delete/AbstractDeleteUser';
+import { UserResponse } from 'src/application/useCases/user/Read/AbstractReadUser';
+import { GetUsersResponse } from 'src/application/useCases/user/Read/AbstractReadUsers';
+import { CreateUserRequestDto } from 'src/domain/dtos/user/Create';
+import { ReadUsersRequestDto } from 'src/domain/dtos/user/ReadUsers';
+import { UpdateUserRequestDto } from 'src/domain/dtos/user/Update';
 
 /**
  * Abstract class defining the contract for a service handling user operations.
@@ -18,8 +15,10 @@ export abstract class AbstractUserManager {
    * @param {CreateUserRequestDto} createUserRequestDto - The data required to create the user.
    * @returns {Promise<CreateUserResponse>} A promise resolving to the created user.
    */
-  abstract create(createUserRequestDto: CreateUserRequestDto): Promise<CreateUserResponse>;
-  
+  abstract create(
+    createUserRequestDto: CreateUserRequestDto,
+  ): Promise<CreateUserResponse>;
+
   /**
    * Executes the get all users use case.
    *
@@ -28,7 +27,7 @@ export abstract class AbstractUserManager {
    * @returns {Promise<GetUsersResponse>} The response data containing users information.
    */
   abstract getAll(data: ReadUsersRequestDto): Promise<GetUsersResponse>;
-  
+
   /**
    * Retrieves a user by ID.
    * @param {string} userId - The ID of the user to retrieve.
@@ -36,14 +35,16 @@ export abstract class AbstractUserManager {
    */
   abstract getById(userId: string): Promise<UserResponse>;
 
-
   /**
    * Updates an existing user.
    * @param {string} userId - The ID of the user to update.
    * @param {UpdateUserRequestDto} updateUserRequestDto - The data to update the user.
    * @returns {Promise<UserResponse>} A promise resolving to the updated user if found and updated, or null if not found.
    */
-  abstract update(userId: string, updateUserRequestDto: UpdateUserRequestDto): Promise<UserResponse>;
+  abstract update(
+    userId: string,
+    updateUserRequestDto: UpdateUserRequestDto,
+  ): Promise<UserResponse>;
 
   /**
    * Deletes a user by ID.

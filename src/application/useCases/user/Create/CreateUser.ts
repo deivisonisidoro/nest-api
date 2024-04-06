@@ -1,10 +1,13 @@
-import { CreateUserRequestDto } from "../../../../domain/dtos/user/Create";
-import { AbstractPasswordHasher } from "../../../providers/PasswordHasher";
-import { AbstractUserRepository } from "../../../repositories/User";
-import { UserErrorMessageEnum } from "../../../../domain/enums/user/ErrorMessage";
-import { left, right } from "../../../../domain/utils/either/either";
-import { RequiredParametersError } from "../../../../domain/utils/errors/RequiredParametersError";
-import { AbstractCreateUserUseCase, CreateUserResponse } from "./AbstractCreateUser";
+import { CreateUserRequestDto } from '../../../../domain/dtos/user/Create';
+import { UserErrorMessageEnum } from '../../../../domain/enums/user/ErrorMessage';
+import { left, right } from '../../../../domain/utils/either/either';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
+import { AbstractPasswordHasher } from '../../../providers/PasswordHasher';
+import { AbstractUserRepository } from '../../../repositories/User';
+import {
+  AbstractCreateUserUseCase,
+  CreateUserResponse,
+} from './AbstractCreateUser';
 
 /**
  * Use case for creating a new user.
@@ -31,15 +34,27 @@ export class CreateUserUseCase implements AbstractCreateUserUseCase {
    * @param {CreateUserRequestDto} createUserRequestDto - Data representing the request to create a user.
    * @returns {Promise<CreateUserResponse>} A promise resolving to the response data.
    */
-  async execute(createUserRequestDto: CreateUserRequestDto): Promise<CreateUserResponse> {
-    const userAlreadyExists = await this.userRepository.getUser(
-      { email: createUserRequestDto.email },
-    );
+  async execute(
+    createUserRequestDto: CreateUserRequestDto,
+  ): Promise<CreateUserResponse> {
+    const userAlreadyExists = await this.userRepository.getUser({
+      email: createUserRequestDto.email,
+    });
     if (userAlreadyExists) {
-      return left(new RequiredParametersError(UserErrorMessageEnum.UserAlreadyExists, 400));
+      return left(
+        new RequiredParametersError(
+          UserErrorMessageEnum.UserAlreadyExists,
+          400,
+        ),
+      );
     }
-    const passwordHashed = await this.passwordHasher.hashPassword(createUserRequestDto.password);
-    const user = await this.userRepository.createUser({...createUserRequestDto, password: passwordHashed});
+    const passwordHashed = await this.passwordHasher.hashPassword(
+      createUserRequestDto.password,
+    );
+    const user = await this.userRepository.createUser({
+      ...createUserRequestDto,
+      password: passwordHashed,
+    });
     return right(user);
   }
 }

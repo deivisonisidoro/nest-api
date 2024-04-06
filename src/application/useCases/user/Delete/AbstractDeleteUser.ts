@@ -1,8 +1,7 @@
-import { Either } from "src/domain/utils/either/either";
-import { RequiredParametersError } from "src/domain/utils/errors/RequiredParametersError";
+import { Either } from 'src/domain/utils/either/either';
+import { RequiredParametersError } from 'src/domain/utils/errors/RequiredParametersError';
 
 export type DeleteUserResponse = Either<RequiredParametersError, boolean>;
-
 
 /**
  * Abstract class for deleting a user.

@@ -1,13 +1,15 @@
-import { AbstractUserRepository } from "../../../repositories/User";
-import { UserErrorMessageEnum } from "../../../../domain/enums/user/ErrorMessage";
-import { left } from "../../../../domain/utils/either/either";
-import { RequiredParametersError } from "../../../../domain/utils/errors/RequiredParametersError";
-import { DeleteUserUseCase } from "./DeleteUser";
+import { UserErrorMessageEnum } from '../../../../domain/enums/user/ErrorMessage';
+import { left } from '../../../../domain/utils/either/either';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
+import { AbstractUserRepository } from '../../../repositories/User';
+import { DeleteUserUseCase } from './DeleteUser';
 
 describe('DeleteUserUseCase', () => {
   let userRepository: AbstractUserRepository;
   let deleteUserUseCase: DeleteUserUseCase;
-  const userDoesNotExist = left(new RequiredParametersError(UserErrorMessageEnum.UserDoesNotExist, 400));
+  const userDoesNotExist = left(
+    new RequiredParametersError(UserErrorMessageEnum.UserDoesNotExist, 400),
+  );
 
   beforeEach(() => {
     userRepository = {
@@ -26,7 +28,7 @@ describe('DeleteUserUseCase', () => {
     expect(result.isLeft()).toBe(true);
     expect(result.value).toBeInstanceOf(RequiredParametersError);
     expect(result.value).toStrictEqual(userDoesNotExist.value);
-    expect(userRepository.getUser).toHaveBeenCalledWith({id: 'user_id'});
+    expect(userRepository.getUser).toHaveBeenCalledWith({ id: 'user_id' });
     expect(userRepository.deleteUser).not.toHaveBeenCalled();
   });
 
@@ -38,7 +40,7 @@ describe('DeleteUserUseCase', () => {
 
     expect(result.isRight()).toBe(true);
     expect(result.value).toBe(true);
-    expect(userRepository.getUser).toHaveBeenCalledWith({id: 'user_id'});
+    expect(userRepository.getUser).toHaveBeenCalledWith({ id: 'user_id' });
     expect(userRepository.deleteUser).toHaveBeenCalledWith('user_id');
   });
 
@@ -50,7 +52,7 @@ describe('DeleteUserUseCase', () => {
 
     expect(result.isRight()).toBe(true);
     expect(result.value).toBe(false);
-    expect(userRepository.getUser).toHaveBeenCalledWith({id: 'user_id'});
+    expect(userRepository.getUser).toHaveBeenCalledWith({ id: 'user_id' });
     expect(userRepository.deleteUser).toHaveBeenCalledWith('user_id');
   });
 });

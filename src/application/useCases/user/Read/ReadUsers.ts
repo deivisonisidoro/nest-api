@@ -1,10 +1,12 @@
-import { AbstractUserRepository } from "../../../repositories/User";
-
-import { UserErrorMessageEnum } from "../../../../domain/enums/user/ErrorMessage";
-import { left, right } from "../../../../domain/utils/either/either";
-import { RequiredParametersError } from "../../../../domain/utils/errors/RequiredParametersError";
-import { AbstractReadUsersUseCase, GetUsersResponse } from "./AbstractReadUsers";
-import { ReadUsersRequestDto } from "../../../../domain/dtos/user/ReadUsers";
+import { ReadUsersRequestDto } from '../../../../domain/dtos/user/ReadUsers';
+import { UserErrorMessageEnum } from '../../../../domain/enums/user/ErrorMessage';
+import { left, right } from '../../../../domain/utils/either/either';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
+import { AbstractUserRepository } from '../../../repositories/User';
+import {
+  AbstractReadUsersUseCase,
+  GetUsersResponse,
+} from './AbstractReadUsers';
 
 /**
  * Use case for retrieving all users.
@@ -19,9 +21,7 @@ export class ReadUsersUseCase implements AbstractReadUsersUseCase {
    * @constructor
    * @param {AbstractUserRepository} userRepository - The repository for users data.
    */
-  constructor(
-    private userRepository: AbstractUserRepository,
-  ) {}
+  constructor(private userRepository: AbstractUserRepository) {}
 
   /**
    * Executes the get all users use case.
@@ -32,9 +32,11 @@ export class ReadUsersUseCase implements AbstractReadUsersUseCase {
    */
   async execute(data: ReadUsersRequestDto): Promise<GetUsersResponse> {
     const users = await this.userRepository.getUsers(data);
-    if(users.length === 0){
-      return  left(new RequiredParametersError(UserErrorMessageEnum.UserNotFound, 404));
+    if (users.length === 0) {
+      return left(
+        new RequiredParametersError(UserErrorMessageEnum.UserNotFound, 404),
+      );
     }
-    return right(users)
+    return right(users);
   }
 }

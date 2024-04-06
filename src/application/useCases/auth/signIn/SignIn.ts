@@ -1,10 +1,11 @@
-import { JwtService } from "@nestjs/jwt";
-import { AbstractPasswordHasher } from "../../../providers/PasswordHasher";
-import { AbstractUserRepository } from "../../../repositories/User";
-import { AuthErrorMessageEnum } from "../../../../domain/enums/auth/ErrorMessage";
-import { left, right } from "../../../../domain/utils/either/either";
-import { RequiredParametersError } from "../../../../domain/utils/errors/RequiredParametersError";
-import { AbstractSingInUserUseCase, LoginResponse } from "./AbstractSingInUser";
+import { JwtService } from '@nestjs/jwt';
+
+import { AuthErrorMessageEnum } from '../../../../domain/enums/auth/ErrorMessage';
+import { left, right } from '../../../../domain/utils/either/either';
+import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
+import { AbstractPasswordHasher } from '../../../providers/PasswordHasher';
+import { AbstractUserRepository } from '../../../repositories/User';
+import { AbstractSingInUserUseCase, LoginResponse } from './AbstractSingInUser';
 
 /**
  * Use case for authenticating a user.
@@ -33,21 +34,22 @@ export class SignInUseCase implements AbstractSingInUserUseCase {
    * @param {string} password - The password of the user.
    * @returns {Promise<LoginResponse>} A promise resolving to an object containing the access token.
    */
-  async execute(
-    email: string,
-    password: string,
-  ): Promise<LoginResponse> {
+  async execute(email: string, password: string): Promise<LoginResponse> {
     const user = await this.userRepository.getUser({ email });
-    
+
     if (!user) {
-      return left(new RequiredParametersError(AuthErrorMessageEnum.EmailOrPasswordWrong));
+      return left(
+        new RequiredParametersError(AuthErrorMessageEnum.EmailOrPasswordWrong),
+      );
     }
     const passwordMatch = await this.passwordHasher.comparePasswords(
       password,
       user.password,
     );
     if (!passwordMatch) {
-      return left(new RequiredParametersError(AuthErrorMessageEnum.EmailOrPasswordWrong));
+      return left(
+        new RequiredParametersError(AuthErrorMessageEnum.EmailOrPasswordWrong),
+      );
     }
     const payload = { sub: user.id, email: user.email };
     return right({

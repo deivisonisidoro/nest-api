@@ -1,11 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 
 import { PrismaService } from '../../src/infra/database/nestPrisma/prisma.service';
 import { AppModule } from '../../src/presentation/nest/app.module';
-
-
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -21,10 +19,10 @@ describe('AuthController (e2e)', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-    
+
     prisma = module.get(PrismaService);
     await prisma.cleanDatabase();
-    
+
     app = module.createNestApplication();
     await app.init();
   });
@@ -34,67 +32,65 @@ describe('AuthController (e2e)', () => {
   });
 
   it('should sign in a user', async () => {
-    await request(app.getHttpServer())
-        .post('/users')
-        .send(userData);
-    
+    await request(app.getHttpServer()).post('/users').send(userData);
+
     await request(app.getHttpServer())
       .post('/auth/login')
       .send({
         email: userData.email,
-        password: userData.password
+        password: userData.password,
       })
       .expect(HttpStatus.OK);
   });
-  
+
   it('should not able to sign in a user', async () => {
     const response = await request(app.getHttpServer())
       .post('/auth/login')
       .send({
-        email: "test",
-        password: "test"
-      })
-      
+        email: 'test',
+        password: 'test',
+      });
+
     expect(response.status).toBe(HttpStatus.BAD_REQUEST);
   });
-  
+
   it('should be able to return information of user', async () => {
     const loginReq = await request(app.getHttpServer())
       .post('/auth/login')
       .send({
         email: userData.email,
-        password: userData.password
-      })
-      const token  = loginReq.body.access_token
-      
-      const response = await request(app.getHttpServer())
+        password: userData.password,
+      });
+    const token = loginReq.body.access_token;
+
+    const response = await request(app.getHttpServer())
       .get('/auth/profile')
       .set('Authorization', 'Bearer ' + token)
       .send({
-        email: "test",
-        password: "test"
-      })
-      
+        email: 'test',
+        password: 'test',
+      });
+
     expect(response.status).toBe(HttpStatus.OK);
   });
-  
+
   it('should not be able to return information of user', async () => {
     const loginReq = await request(app.getHttpServer())
       .post('/auth/login')
       .send({
-        email: "test",
-        password: "test"
-      })
-      const token  = loginReq.body.access_token
+        email: 'test',
+        password: 'test',
+      });
+    const token = loginReq.body.access_token;
 
-      const response = await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .get('/auth/profile')
       .set('Authorization', 'Bearer ' + token)
       .send({
-        email: "test",
-        password: "test"
-      })
-      
+        email: 'test',
+        password: 'test',
+      });
+
     expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
   });
 });

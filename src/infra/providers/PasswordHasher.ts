@@ -1,5 +1,5 @@
-import * as bcrypt from 'bcryptjs'
-import { AbstractPasswordHasher } from 'src/application/providers/PasswordHasher'
+import * as bcrypt from 'bcryptjs';
+import { AbstractPasswordHasher } from 'src/application/providers/PasswordHasher';
 
 /**
  * Implementation of the password hashing provider using bcrypt.
@@ -14,7 +14,7 @@ export class PasswordHasher implements AbstractPasswordHasher {
    * @private
    * @readonly
    */
-  private readonly saltRounds: number
+  private readonly saltRounds: number;
 
   /**
    * Creates an instance of the PasswordHasher.
@@ -22,7 +22,7 @@ export class PasswordHasher implements AbstractPasswordHasher {
    * @param {number} [saltRounds=10] - The number of salt rounds to use for password hashing.
    */
   constructor(saltRounds: number = 10) {
-    this.saltRounds = saltRounds
+    this.saltRounds = saltRounds;
   }
 
   /**
@@ -33,9 +33,9 @@ export class PasswordHasher implements AbstractPasswordHasher {
    * @returns {Promise<string>} The hashed password.
    */
   async hashPassword(password: string): Promise<string> {
-    const salt = await bcrypt.genSalt(this.saltRounds)
-    const hash = await bcrypt.hash(password, salt)
-    return hash
+    const salt = await bcrypt.genSalt(this.saltRounds);
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
   }
 
   /**
@@ -50,6 +50,6 @@ export class PasswordHasher implements AbstractPasswordHasher {
     password: string,
     hashedPassword: string,
   ): Promise<boolean> {
-    return bcrypt.compare(password, hashedPassword)
+    return bcrypt.compare(password, hashedPassword);
   }
 }

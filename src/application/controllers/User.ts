@@ -1,7 +1,7 @@
-import { User } from "../../domain/entities/User";
-import { CreateUserRequestDto } from "../../domain/dtos/user/Create";
-import { ReadUsersRequestDto } from "../../domain/dtos/user/ReadUsers";
-import { UpdateUserRequestDto } from "../../domain/dtos/user/Update";
+import { CreateUserRequestDto } from '../../domain/dtos/user/Create';
+import { ReadUsersRequestDto } from '../../domain/dtos/user/ReadUsers';
+import { UpdateUserRequestDto } from '../../domain/dtos/user/Update';
+import { User } from '../../domain/entities/User';
 
 /**
  * Abstract controller providing endpoints for user management operations.
@@ -20,7 +20,7 @@ export abstract class AbstractUsersController {
    * @returns {Promise<User[]>} A promise resolving to an array containing all users.
    */
   abstract getAll(query: ReadUsersRequestDto): Promise<User[]>;
-  
+
   /**
    * Retrieves a user by their ID.
    * @param {string} userId - The ID of the user to retrieve.
@@ -34,7 +34,10 @@ export abstract class AbstractUsersController {
    * @param {UpdateUserRequestDto} updateUserRequestDto - Data to update the user.
    * @returns {Promise<User | null>} A promise resolving to the updated user if found and updated, or null if not found.
    */
-  abstract update(userId: string, updateUserRequestDto: UpdateUserRequestDto): Promise<User | null>;
+  abstract update(
+    userId: string,
+    updateUserRequestDto: UpdateUserRequestDto,
+  ): Promise<User | null>;
 
   /**
    * Deletes a user by their ID.

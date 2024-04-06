@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 
 /**
  * DTO (Data Transfer Object) for creating a user.
@@ -14,7 +14,7 @@ export class CreateUserRequestDto {
   @IsNotEmpty({ message: 'Email is required' })
   @IsEmail({}, { message: 'Invalid email format' })
   email: string;
-  
+
   /**
    * The first name of the user.
    *
@@ -24,7 +24,7 @@ export class CreateUserRequestDto {
    */
   @IsNotEmpty({ message: 'First name is required' })
   firstName: string;
-  
+
   /**
    * The last name of the user.
    *
@@ -34,7 +34,7 @@ export class CreateUserRequestDto {
    */
   @IsNotEmpty({ message: 'Last name is required' })
   lastName: string;
-  
+
   /**
    * The password of the user.
    *
@@ -53,7 +53,12 @@ export class CreateUserRequestDto {
    * @param {string} lastName - The last name of the user.
    * @param {string} password - The password of the user.
    */
-  constructor(email: string, firstName: string, lastName: string, password: string) {
+  constructor(
+    email: string,
+    firstName: string,
+    lastName: string,
+    password: string,
+  ) {
     this.email = email;
     this.firstName = firstName;
     this.lastName = lastName;

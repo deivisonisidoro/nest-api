@@ -2,13 +2,12 @@
  * @fileoverview End-to-end (E2E) tests for UserController.
  */
 
-import { Test } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 
-import { PrismaService } from '../../src/infra/database/nestPrisma/prisma.service';
-
 import { UserErrorMessageEnum } from '../../src/domain/enums/user/ErrorMessage';
+import { PrismaService } from '../../src/infra/database/nestPrisma/prisma.service';
 import { AppModule } from '../../src/presentation/nest/app.module';
 
 /**
@@ -87,7 +86,9 @@ describe('UserController (e2e)', () => {
         .send(userData);
 
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
-      expect(response.body.message).toBe(UserErrorMessageEnum.UserAlreadyExists);
+      expect(response.body.message).toBe(
+        UserErrorMessageEnum.UserAlreadyExists,
+      );
     });
   });
 
@@ -139,14 +140,18 @@ describe('UserController (e2e)', () => {
 
       expect(response.status).toBe(HttpStatus.OK);
     });
-    
+
     /**
      * Test case to verify the ability to get a list of users with query parameters.
      */
     it('Should be able to get a list of users with query parameters', async () => {
       const response = await request(app.getHttpServer())
         .get('/users')
-        .query({ firstName: userData.firstName, lastName: userData.lastName, email: userData.email })
+        .query({
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+        })
         .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.OK);
@@ -159,7 +164,11 @@ describe('UserController (e2e)', () => {
     it('Should not find any users when using non-matching query parameters', async () => {
       const response = await request(app.getHttpServer())
         .get('/users')
-        .query({ firstName: 'Nonexistent', lastName: 'User', email: 'nonexistent.user@example.com' })
+        .query({
+          firstName: 'Nonexistent',
+          lastName: 'User',
+          email: 'nonexistent.user@example.com',
+        })
         .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.NOT_FOUND);
@@ -170,7 +179,6 @@ describe('UserController (e2e)', () => {
      * Test case to verify the ability to get a user.
      */
     it('Should be able to get user', async () => {
-
       const response = await request(app.getHttpServer())
         .get(`/users/${createdUserId}`)
         .set('Authorization', 'Bearer ' + accessToken);

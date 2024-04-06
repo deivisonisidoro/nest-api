@@ -1,4 +1,4 @@
-import { Left } from "./Left";
+import { Left } from './Left';
 
 /**
  * Represents the Right side of an Either type.

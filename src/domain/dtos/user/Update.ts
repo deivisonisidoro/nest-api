@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { IsEmail, MinLength } from 'class-validator';
 
 /**
  * DTO (Data Transfer Object) for updating a user.
@@ -13,7 +13,7 @@ export class UpdateUserRequestDto {
    */
   @IsEmail({}, { message: 'Invalid email format' })
   email?: string;
-  
+
   /**
    * The new first name of the user.
    *
@@ -22,7 +22,7 @@ export class UpdateUserRequestDto {
    * @example 'John'
    */
   firstName?: string;
-  
+
   /**
    * The new last name of the user.
    *
@@ -31,7 +31,7 @@ export class UpdateUserRequestDto {
    * @example 'Doe'
    */
   lastName?: string;
-  
+
   /**
    * The new password of the user.
    *
@@ -49,7 +49,12 @@ export class UpdateUserRequestDto {
    * @param {string} lastName - The new last name of the user.
    * @param {string} password - The new password of the user.
    */
-  constructor(email?: string, firstName?: string, lastName?: string, password?: string) {
+  constructor(
+    email?: string,
+    firstName?: string,
+    lastName?: string,
+    password?: string,
+  ) {
     if (email) this.email = email;
     if (firstName) this.firstName = firstName;
     if (lastName) this.lastName = lastName;
