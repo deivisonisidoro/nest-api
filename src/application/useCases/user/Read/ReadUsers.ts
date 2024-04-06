@@ -7,7 +7,7 @@ import { AbstractReadUsersUseCase, GetUsersResponse } from "./AbstractReadUsers"
 import { ReadUsersRequestDto } from "../../../../domain/dtos/user/ReadUsers";
 
 /**
- * Use case for retrieving all userss.
+ * Use case for retrieving all users.
  *
  * @class
  * @implements {AbstractReadUsersUseCase}
@@ -24,7 +24,7 @@ export class ReadUsersUseCase implements AbstractReadUsersUseCase {
   ) {}
 
   /**
-   * Executes the get all userss use case.
+   * Executes the get all users use case.
    *
    * @async
    * @param {ReadUsersRequestDto} data - The data containing parameters for users retrieval, such as filters and pagination settings.

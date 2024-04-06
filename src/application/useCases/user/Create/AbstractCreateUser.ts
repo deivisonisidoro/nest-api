@@ -1,11 +1,13 @@
-import { User } from "@prisma/client";
 import { Either } from "src/domain/utils/either/either";
 import { RequiredParametersError } from "src/domain/utils/errors/RequiredParametersError";
 import { CreateUserRequestDto } from "../../../../domain/dtos/user/Create";
+import { User } from "src/domain/entities/User";
 
-
-export type CreateUserResponse = Either<RequiredParametersError, User>
-
+/**
+ * Represents the response of creating a user, which can either be a success (Right) containing the created user
+ * or a failure (Left) containing a RequiredParametersError indicating missing parameters.
+ */
+export type CreateUserResponse = Either<RequiredParametersError, User>;
 
 /**
  * Abstract class defining the contract for the use case of creating a new user.
@@ -13,7 +15,7 @@ export type CreateUserResponse = Either<RequiredParametersError, User>
 export abstract class AbstractCreateUserUseCase {
 
   /**
-   * Executes the create user use case.
+   * Executes the create user use case asynchronously.
    *
    * @async
    * @param {CreateUserRequestDto} createUserRequestDto - Data representing the request to create a user.

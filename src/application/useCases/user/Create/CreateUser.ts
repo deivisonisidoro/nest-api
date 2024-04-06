@@ -1,12 +1,10 @@
-import { CreateUserRequestDto } from "../../../../domain/dtos/user/Create"
-import { AbstractPasswordHasher } from "../../../providers/PasswordHasher"
-import { AbstractUserRepository } from "../../../repositories/User"
-
-import { UserErrorMessageEnum } from "../../../../domain/enums/user/ErrorMessage"
-import { left, right } from "../../../../domain/utils/either/either"
-import { RequiredParametersError } from "../../../../domain/utils/errors/RequiredParametersError"
-import { AbstractCreateUserUseCase, CreateUserResponse } from "./AbstractCreateUser"
-
+import { CreateUserRequestDto } from "../../../../domain/dtos/user/Create";
+import { AbstractPasswordHasher } from "../../../providers/PasswordHasher";
+import { AbstractUserRepository } from "../../../repositories/User";
+import { UserErrorMessageEnum } from "../../../../domain/enums/user/ErrorMessage";
+import { left, right } from "../../../../domain/utils/either/either";
+import { RequiredParametersError } from "../../../../domain/utils/errors/RequiredParametersError";
+import { AbstractCreateUserUseCase, CreateUserResponse } from "./AbstractCreateUser";
 
 /**
  * Use case for creating a new user.
@@ -28,9 +26,8 @@ export class CreateUserUseCase implements AbstractCreateUserUseCase {
   ) {}
 
   /**
-   * Executes the create user use case.
+   * Executes the create user use case asynchronously.
    *
-   * @async
    * @param {CreateUserRequestDto} createUserRequestDto - Data representing the request to create a user.
    * @returns {Promise<CreateUserResponse>} A promise resolving to the response data.
    */

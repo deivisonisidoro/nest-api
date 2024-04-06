@@ -5,12 +5,19 @@ import { AuthGuard } from '../../guards/auth/auth.guard';
 import { Public } from '../../helpers/customDecorator/Public';
 import { AbstractAuthManager } from '../../managers/Auth';
 
-
+/**
+ * Controller for handling authentication-related endpoints.
+ */
 @ApiTags("Auth")
 @Controller('auth')
 export class AuthController {
   constructor(private authManager: AbstractAuthManager) {}
 
+  /**
+   * Endpoint for user login.
+   * @param {LoginRequestDTO} signInDto - The login request DTO.
+   * @returns {Promise<any>} The result of the login operation.
+   */
   @HttpCode(HttpStatus.OK)
   @Public()
   @Post('login')
@@ -22,6 +29,11 @@ export class AuthController {
     return result.value;
   }
   
+  /**
+   * Endpoint for retrieving user profile.
+   * @param {Request} req - The request object.
+   * @returns {any} The user profile.
+   */
   @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {

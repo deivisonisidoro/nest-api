@@ -1,9 +1,7 @@
-
-
-import { User } from "@prisma/client";
 import { Either } from "../../../../domain/utils/either/either";
 import { RequiredParametersError } from "../../../../domain/utils/errors/RequiredParametersError";
 import { ReadUsersRequestDto } from "../../../../domain/dtos/user/ReadUsers";
+import { User } from "../../../../domain/entities/User";
 
 export type GetUsersResponse = Either<RequiredParametersError, User[]>;
 
