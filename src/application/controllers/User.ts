@@ -1,6 +1,6 @@
 import { CreateUserRequestDto } from '../../domain/dtos/user/Create';
-import { User } from '../../domain/entities/User';
 import { ReadUsersRequestDto } from '../../domain/dtos/user/ReadUsers';
+import { User } from '../../domain/entities/User';
 import { UpdateUserRequestDto } from '../../domain/dtos/user/Update';
 
 /**
