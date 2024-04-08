@@ -25,7 +25,7 @@ export class AuthController {
   constructor(private authManager: AbstractAuthManager) {}
 
   /**
-   * Endpoint for user login.
+   * Endpoint for customer login.
    * @param {LoginRequestDTO} signInDto - The login request DTO.
    * @returns {Promise<any>} The result of the login operation.
    */
@@ -44,13 +44,13 @@ export class AuthController {
   }
 
   /**
-   * Endpoint for retrieving user profile.
+   * Endpoint for retrieving customer profile.
    * @param {Request} req - The request object.
-   * @returns {any} The user profile.
+   * @returns {any} The customer profile.
    */
   @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    return req.user;
+    return req.customer;
   }
 }

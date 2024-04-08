@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { AbstractPasswordHasher } from '../../../../application/providers/PasswordHasher';
-import { AbstractUserRepository } from '../../../../application/repositories/User';
-import { LoginResponse } from '../../../../application/useCases/auth/signIn/AbstractSingInUser';
+import { AbstractCustomerRepository } from '../../../../application/repositories/Customer';
+import { LoginResponse } from '../../../../application/useCases/auth/signIn/AbstractSingIn';
 import { SignInUseCase } from '../../../../application/useCases/auth/signIn/SignIn';
 import { AbstractAuthManager } from '../Auth';
 
@@ -13,20 +13,20 @@ import { AbstractAuthManager } from '../Auth';
 @Injectable()
 export class AuthManager implements AbstractAuthManager {
   constructor(
-    private userRepository: AbstractUserRepository,
+    private customerRepository: AbstractCustomerRepository,
     private jwtService: JwtService,
     private passwordHasher: AbstractPasswordHasher,
   ) {}
 
   /**
-   * Signs in a user and generates an access token.
-   * @param {string} email - The user's email.
-   * @param {string} pass - The user's password.
+   * Signs in a customer and generates an access token.
+   * @param {string} email - The customer's email.
+   * @param {string} pass - The customer's password.
    * @returns {Promise<LoginResponse>} A promise resolving to an object containing the access token.
    */
   async signIn(email: string, pass: string): Promise<LoginResponse> {
     const signInUseCase = new SignInUseCase(
-      this.userRepository,
+      this.customerRepository,
       this.jwtService,
       this.passwordHasher,
     );

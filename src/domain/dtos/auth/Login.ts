@@ -5,24 +5,24 @@ import { IsNotEmpty } from 'class-validator';
  */
 export class LoginRequestDTO {
   /**
-   * The email address of the user. Required and must not be empty.
+   * The email address of the customer. Required and must not be empty.
    *
    * @swagger
    * required: true
    * type: string
-   * description: The email address of the user.
-   * example: user@example.com
+   * description: The email address of the customer.
+   * example: customer@example.com
    */
   @IsNotEmpty()
   email: string;
 
   /**
-   * The password of the user. Required and must not be empty.
+   * The password of the customer. Required and must not be empty.
    *
    * @swagger
    * required: true
    * type: string
-   * description: The password of the user.
+   * description: The password of the customer.
    * example: password123
    */
   @IsNotEmpty()

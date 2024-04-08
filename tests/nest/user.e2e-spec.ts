@@ -1,29 +1,29 @@
 /**
- * @fileoverview End-to-end (E2E) tests for UserController.
+ * @fileoverview End-to-end (E2E) tests for CustomerController.
  */
 
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 
-import { UserErrorMessageEnum } from '../../src/domain/enums/user/ErrorMessage';
+import { CustomerErrorMessageEnum } from '../../src/domain/enums/customer/ErrorMessage';
 import { PrismaService } from '../../src/infra/database/nestPrisma/prisma.service';
 import { AppModule } from '../../src/presentation/nest/app.module';
 
 /**
- * Describe block for UserController E2E tests.
+ * Describe block for CustomerController E2E tests.
  */
-describe('UserController (e2e)', () => {
+describe('CustomerController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
-  let createdUserId: string;
+  let createdCustomerId: string;
   let accessToken: string;
 
-  const userData = {
+  const customerData = {
     email: 'test@example.com',
     password: 'password',
     firstName: 'Test',
-    lastName: 'User',
+    lastName: 'Customer',
   };
 
   /**
@@ -40,14 +40,14 @@ describe('UserController (e2e)', () => {
     app = moduleRef.createNestApplication();
     await app.init();
     const response = await request(app.getHttpServer())
-      .post('/users')
-      .send(userData)
+      .post('/customers')
+      .send(customerData)
       .expect(HttpStatus.CREATED);
 
-    createdUserId = response.body.id;
+    createdCustomerId = response.body.id;
     const loginResponse = await request(app.getHttpServer())
       .post('/auth/login')
-      .send({ email: userData.email, password: userData.password })
+      .send({ email: customerData.email, password: customerData.password })
       .expect(HttpStatus.OK);
 
     accessToken = loginResponse.body.access_token;
@@ -56,20 +56,20 @@ describe('UserController (e2e)', () => {
     await app.close();
   });
   /**
-   * Describe block for testing user creation functionality.
+   * Describe block for testing customer creation functionality.
    */
-  describe('Create User', () => {
+  describe('Create Customer', () => {
     /**
-     * Test case to verify the ability to create a new user.
+     * Test case to verify the ability to create a new customer.
      */
-    it('should be able to create a new user', async () => {
+    it('should be able to create a new customer', async () => {
       const response = await request(app.getHttpServer())
-        .post('/users')
+        .post('/customers')
         .send({
-          email: 'newUser@example.com',
+          email: 'newCustomer@example.com',
           password: 'password',
           firstName: 'Test',
-          lastName: 'User',
+          lastName: 'Customer',
         })
         .expect(HttpStatus.CREATED);
 
@@ -78,33 +78,33 @@ describe('UserController (e2e)', () => {
     });
 
     /**
-     * Test case to verify that it's not possible to create an existing user.
+     * Test case to verify that it's not possible to create an existing customer.
      */
-    it('should not be able to create an existing user', async () => {
+    it('should not be able to create an existing customer', async () => {
       const response = await request(app.getHttpServer())
-        .post('/users')
-        .send(userData);
+        .post('/customers')
+        .send(customerData);
 
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
       expect(response.body.message).toBe(
-        UserErrorMessageEnum.UserAlreadyExists,
+        CustomerErrorMessageEnum.CustomerAlreadyExists,
       );
     });
   });
 
   /**
-   * Describe block for testing user update functionality.
+   * Describe block for testing customer update functionality.
    */
-  describe('Update User', () => {
+  describe('Update Customer', () => {
     /**
-     * Test case to verify the ability to update the password of an existing user.
+     * Test case to verify the ability to update the password of an existing customer.
      */
-    it('Should be able to update password of an existing user', async () => {
+    it('Should be able to update password of an existing customer', async () => {
       const response = await request(app.getHttpServer())
-        .put(`/users/${createdUserId}`)
+        .put(`/customers/${createdCustomerId}`)
         .set('Authorization', 'Bearer ' + accessToken)
         .send({
-          ...userData,
+          ...customerData,
           password: '123',
         });
 
@@ -112,11 +112,11 @@ describe('UserController (e2e)', () => {
     });
 
     /**
-     * Test case to verify that it's not possible to update a non-existing user.
+     * Test case to verify that it's not possible to update a non-existing customer.
      */
-    it('Should not be able to update an not existing user', async () => {
+    it('Should not be able to update an not existing customer', async () => {
       const response = await request(app.getHttpServer())
-        .patch('/users/:id')
+        .patch('/customers/:id')
         .set('Authorization', 'Bearer ' + accessToken)
         .send({
           email: 'testUpdatedExisting@test.com.br',
@@ -127,71 +127,71 @@ describe('UserController (e2e)', () => {
   });
 
   /**
-   * Describe block for testing user retrieval functionality.
+   * Describe block for testing customer retrieval functionality.
    */
-  describe('Retrieve User', () => {
+  describe('Retrieve Customer', () => {
     /**
-     * Test case to verify the ability to get a list of users.
+     * Test case to verify the ability to get a list of customers.
      */
-    it('Should be able to get a list of users', async () => {
+    it('Should be able to get a list of customers', async () => {
       const response = await request(app.getHttpServer())
-        .get('/users')
+        .get('/customers')
         .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.OK);
     });
 
     /**
-     * Test case to verify the ability to get a list of users with query parameters.
+     * Test case to verify the ability to get a list of customers with query parameters.
      */
-    it('Should be able to get a list of users with query parameters', async () => {
+    it('Should be able to get a list of customers with query parameters', async () => {
       const response = await request(app.getHttpServer())
-        .get('/users')
+        .get('/customers')
         .query({
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          email: userData.email,
+          firstName: customerData.firstName,
+          lastName: customerData.lastName,
+          email: customerData.email,
         })
         .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.OK);
-      expect(response.body).toHaveLength(1); // Assuming one user matches the query parameters
+      expect(response.body).toHaveLength(1); // Assuming one customer matches the query parameters
     });
 
     /**
-     * Test case to verify that no users are found when using query parameters that don't match any users.
+     * Test case to verify that no customers are found when using query parameters that don't match any customers.
      */
-    it('Should not find any users when using non-matching query parameters', async () => {
+    it('Should not find any customers when using non-matching query parameters', async () => {
       const response = await request(app.getHttpServer())
-        .get('/users')
+        .get('/customers')
         .query({
           firstName: 'Nonexistent',
-          lastName: 'User',
-          email: 'nonexistent.user@example.com',
+          lastName: 'Customer',
+          email: 'nonexistent.customer@example.com',
         })
         .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.NOT_FOUND);
-      expect(response.body.message).toBe(UserErrorMessageEnum.UserNotFound);
+      expect(response.body.message).toBe(CustomerErrorMessageEnum.CustomerNotFound);
     });
 
     /**
-     * Test case to verify the ability to get a user.
+     * Test case to verify the ability to get a customer.
      */
-    it('Should be able to get user', async () => {
+    it('Should be able to get customer', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/users/${createdUserId}`)
+        .get(`/customers/${createdCustomerId}`)
         .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.OK);
     });
 
     /**
-     * Test case to verify that it's not possible to get a user.
+     * Test case to verify that it's not possible to get a customer.
      */
-    it('Should not be able to get user', async () => {
+    it('Should not be able to get customer', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/users/:id`)
+        .get(`/customers/:id`)
         .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.NOT_FOUND);
@@ -199,26 +199,26 @@ describe('UserController (e2e)', () => {
   });
 
   /**
-   * Describe block for testing user deletion functionality.
+   * Describe block for testing customer deletion functionality.
    */
-  describe('Delete User', () => {
+  describe('Delete Customer', () => {
     /**
-     * Test case to verify the ability to delete an existing user.
+     * Test case to verify the ability to delete an existing customer.
      */
-    it('Should be able to delete an existing user', async () => {
+    it('Should be able to delete an existing customer', async () => {
       const response = await request(app.getHttpServer())
-        .delete(`/users/${createdUserId}`)
+        .delete(`/customers/${createdCustomerId}`)
         .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.OK);
     });
 
     /**
-     * Test case to verify that it's not possible to delete an existing user when userId is wrong.
+     * Test case to verify that it's not possible to delete an existing customer when customerId is wrong.
      */
-    it('Should not be able to delete an existing user when userId is wrong', async () => {
+    it('Should not be able to delete an existing customer when customerId is wrong', async () => {
       const response = await request(app.getHttpServer())
-        .delete('/users/testID')
+        .delete('/customers/testID')
         .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);

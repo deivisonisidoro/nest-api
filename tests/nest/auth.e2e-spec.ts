@@ -8,11 +8,11 @@ import { AppModule } from '../../src/presentation/nest/app.module';
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
-  const userData = {
+  const customerData = {
     email: 'test@example.com',
     password: 'password',
     firstName: 'Test',
-    lastName: 'User',
+    lastName: 'Customer',
   };
 
   beforeAll(async () => {
@@ -31,19 +31,19 @@ describe('AuthController (e2e)', () => {
     await app.close();
   });
 
-  it('should sign in a user', async () => {
-    await request(app.getHttpServer()).post('/users').send(userData);
+  it('should sign in a customer', async () => {
+    await request(app.getHttpServer()).post('/customers').send(customerData);
 
     await request(app.getHttpServer())
       .post('/auth/login')
       .send({
-        email: userData.email,
-        password: userData.password,
+        email: customerData.email,
+        password: customerData.password,
       })
       .expect(HttpStatus.OK);
   });
 
-  it('should not able to sign in a user', async () => {
+  it('should not able to sign in a customer', async () => {
     const response = await request(app.getHttpServer())
       .post('/auth/login')
       .send({
@@ -54,12 +54,12 @@ describe('AuthController (e2e)', () => {
     expect(response.status).toBe(HttpStatus.BAD_REQUEST);
   });
 
-  it('should be able to return information of user', async () => {
+  it('should be able to return information of customer', async () => {
     const loginReq = await request(app.getHttpServer())
       .post('/auth/login')
       .send({
-        email: userData.email,
-        password: userData.password,
+        email: customerData.email,
+        password: customerData.password,
       });
     const token = loginReq.body.access_token;
 
@@ -74,7 +74,7 @@ describe('AuthController (e2e)', () => {
     expect(response.status).toBe(HttpStatus.OK);
   });
 
-  it('should not be able to return information of user', async () => {
+  it('should not be able to return information of customer', async () => {
     const loginReq = await request(app.getHttpServer())
       .post('/auth/login')
       .send({
