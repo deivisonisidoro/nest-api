@@ -70,7 +70,10 @@ export class CustomersController implements AbstractCustomersController {
     @Param('id') customerId: string,
     @Body() updateCustomerRequestDto: UpdateCustomerRequestDto,
   ): Promise<Customer> {
-    const result = await this.CustomerManager.update(customerId, updateCustomerRequestDto);
+    const result = await this.CustomerManager.update(
+      customerId,
+      updateCustomerRequestDto,
+    );
     if (result.isLeft()) {
       throw new BadRequestException(result.value.message);
     }

@@ -4,7 +4,10 @@ import { left, right } from '../../../../domain/utils/either/either';
 import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
 import { AbstractPasswordHasher } from '../../../providers/PasswordHasher';
 import { AbstractCustomerRepository } from '../../../repositories/Customer';
-import { AbstractUpdateCustomerUseCase, CustomerResponse } from './AbstractUpdateCustomer';
+import {
+  AbstractUpdateCustomerUseCase,
+  CustomerResponse,
+} from './AbstractUpdateCustomer';
 
 /**
  * Use case for updating customer information.
@@ -37,16 +40,22 @@ export class UpdateCustomerUseCase implements AbstractUpdateCustomerUseCase {
     customerId: string,
     updateCustomerRequestDto: UpdateCustomerRequestDto,
   ): Promise<CustomerResponse> {
-    const customer = await this.customerRepository.getCustomer({ id: customerId });
+    const customer = await this.customerRepository.getCustomer({
+      id: customerId,
+    });
     if (!customer) {
       return left(
-        new RequiredParametersError(CustomerErrorMessageEnum.CustomerDoesNotExist, 400),
+        new RequiredParametersError(
+          CustomerErrorMessageEnum.CustomerDoesNotExist,
+          400,
+        ),
       );
     }
     if (updateCustomerRequestDto.password) {
-      updateCustomerRequestDto.password = await this.passwordHasher.hashPassword(
-        updateCustomerRequestDto.password,
-      );
+      updateCustomerRequestDto.password =
+        await this.passwordHasher.hashPassword(
+          updateCustomerRequestDto.password,
+        );
     }
     const customerUpdated = await this.customerRepository.updateCustomer(
       customerId,

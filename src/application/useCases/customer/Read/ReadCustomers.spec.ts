@@ -40,7 +40,9 @@ describe('ReadCustomersUseCase', () => {
         createdAt: new Date(),
       },
     ];
-    (customerRepository.getCustomers as jest.Mock).mockResolvedValue(customersResponse);
+    (customerRepository.getCustomers as jest.Mock).mockResolvedValue(
+      customersResponse,
+    );
 
     const requestData: ReadCustomersRequestDto = {
       /* mock request data */

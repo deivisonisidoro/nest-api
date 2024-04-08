@@ -6,8 +6,8 @@ import { PrismaService } from '../../../infra/database/nestPrisma/prisma.service
 import { PasswordHasher } from '../../../infra/providers/PasswordHasher';
 import { PrismaCustomerRepository } from '../../../infra/repositories/PrismaCustomer';
 import { CustomersController } from '../controllers/customer/Customer';
-import { CustomerManager } from '../managers/implementations/Customer';
 import { AbstractCustomerManager } from '../managers/Customer';
+import { CustomerManager } from '../managers/implementations/Customer';
 
 @Module({
   controllers: [CustomersController],

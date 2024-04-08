@@ -172,7 +172,9 @@ describe('CustomerController (e2e)', () => {
         .set('Authorization', 'Bearer ' + accessToken);
 
       expect(response.status).toBe(HttpStatus.NOT_FOUND);
-      expect(response.body.message).toBe(CustomerErrorMessageEnum.CustomerNotFound);
+      expect(response.body.message).toBe(
+        CustomerErrorMessageEnum.CustomerNotFound,
+      );
     });
 
     /**

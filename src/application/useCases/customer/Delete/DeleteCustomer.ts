@@ -28,13 +28,19 @@ export class DeleteCustomerUseCase implements AbstractDeleteCustomerUseCase {
    * @returns {Promise<boolean>} A promise resolving to true if the customer was deleted successfully, false otherwise.
    */
   async execute(customerId: string): Promise<DeleteCustomerResponse> {
-    const customer = await this.customerRepository.getCustomer({ id: customerId });
+    const customer = await this.customerRepository.getCustomer({
+      id: customerId,
+    });
     if (!customer) {
       return left(
-        new RequiredParametersError(CustomerErrorMessageEnum.CustomerDoesNotExist, 400),
+        new RequiredParametersError(
+          CustomerErrorMessageEnum.CustomerDoesNotExist,
+          400,
+        ),
       );
     }
-    const customerIsDeleted = await this.customerRepository.deleteCustomer(customerId);
+    const customerIsDeleted =
+      await this.customerRepository.deleteCustomer(customerId);
     return right(customerIsDeleted);
   }
 }

@@ -24,7 +24,9 @@ export class PrismaCustomerRepository implements AbstractCustomerRepository {
    * @param {CreateCustomerRequestDto} CreateCustomerRequestDto - Data to create the customer.
    * @returns {Promise<Customer>} The created customer.
    */
-  async createCustomer(CreateCustomerRequestDto: CreateCustomerRequestDto): Promise<Customer> {
+  async createCustomer(
+    CreateCustomerRequestDto: CreateCustomerRequestDto,
+  ): Promise<Customer> {
     const createdPrismaCustomer = await this.prisma.customer.create({
       data: {
         email: CreateCustomerRequestDto.email.toString(),
@@ -75,7 +77,9 @@ export class PrismaCustomerRepository implements AbstractCustomerRepository {
 
     const customers = await this.prisma.customer.findMany({ where });
 
-    return customers.map((customer) => this.mapPrismaCustomerToCustomerEntity(customer));
+    return customers.map((customer) =>
+      this.mapPrismaCustomerToCustomerEntity(customer),
+    );
   }
   /**
    * Updates a customer.
@@ -98,7 +102,9 @@ export class PrismaCustomerRepository implements AbstractCustomerRepository {
         password: UpdateCustomerRequestDto.password?.toString(),
       },
     });
-    return updatedCustomer ? this.mapPrismaCustomerToCustomerEntity(updatedCustomer) : null;
+    return updatedCustomer
+      ? this.mapPrismaCustomerToCustomerEntity(updatedCustomer)
+      : null;
   }
 
   /**

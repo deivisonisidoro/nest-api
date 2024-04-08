@@ -3,7 +3,10 @@ import { CustomerErrorMessageEnum } from '../../../../domain/enums/customer/Erro
 import { left, right } from '../../../../domain/utils/either/either';
 import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
 import { AbstractCustomerRepository } from '../../../repositories/Customer';
-import { AbstractReadCustomerUseCase, CustomerResponse } from './AbstractReadCustomer';
+import {
+  AbstractReadCustomerUseCase,
+  CustomerResponse,
+} from './AbstractReadCustomer';
 
 /**
  * Use case for retrieving all customers.
@@ -31,7 +34,10 @@ export class ReadCustomerUseCase implements AbstractReadCustomerUseCase {
     const customer = await this.customerRepository.getCustomer(data);
     if (!customer) {
       return left(
-        new RequiredParametersError(CustomerErrorMessageEnum.CustomerNotFound, 400),
+        new RequiredParametersError(
+          CustomerErrorMessageEnum.CustomerNotFound,
+          400,
+        ),
       );
     }
     return right(customer);

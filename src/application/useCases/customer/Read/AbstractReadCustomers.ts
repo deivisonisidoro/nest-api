@@ -22,5 +22,7 @@ export abstract class AbstractReadCustomersUseCase
    * @param {ReadCustomersRequestDto} data - The data containing parameters for customers retrieval, such as filters and pagination settings.
    * @returns {Promise<GetCustomersResponse>} The response data containing customers information.
    */
-  abstract execute(data: ReadCustomersRequestDto): Promise<GetCustomersResponse>;
+  abstract execute(
+    data: ReadCustomersRequestDto,
+  ): Promise<GetCustomersResponse>;
 }

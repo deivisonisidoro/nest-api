@@ -28,7 +28,10 @@ describe('UpdateCustomerUseCase', () => {
     createdAt: new Date(),
   };
   const customerDoesNotExist = left(
-    new RequiredParametersError(CustomerErrorMessageEnum.CustomerDoesNotExist, 400),
+    new RequiredParametersError(
+      CustomerErrorMessageEnum.CustomerDoesNotExist,
+      400,
+    ),
   );
 
   beforeEach(() => {
@@ -41,12 +44,19 @@ describe('UpdateCustomerUseCase', () => {
       hashPassword: jest.fn(),
     } as unknown as AbstractPasswordHasher;
 
-    updateCustomerUseCase = new UpdateCustomerUseCase(customerRepository, passwordHasher);
+    updateCustomerUseCase = new UpdateCustomerUseCase(
+      customerRepository,
+      passwordHasher,
+    );
   });
 
   it('should update customer information', async () => {
-    (customerRepository.getCustomer as jest.Mock).mockResolvedValue(mockCustomer);
-    (customerRepository.updateCustomer as jest.Mock).mockResolvedValue(mockCustomer);
+    (customerRepository.getCustomer as jest.Mock).mockResolvedValue(
+      mockCustomer,
+    );
+    (customerRepository.updateCustomer as jest.Mock).mockResolvedValue(
+      mockCustomer,
+    );
 
     const result = await updateCustomerUseCase.execute(
       customerId,
@@ -55,7 +65,9 @@ describe('UpdateCustomerUseCase', () => {
 
     expect(result.isRight()).toBe(true);
     expect(result.value).toEqual(mockCustomer);
-    expect(customerRepository.getCustomer).toHaveBeenCalledWith({ id: customerId });
+    expect(customerRepository.getCustomer).toHaveBeenCalledWith({
+      id: customerId,
+    });
     expect(customerRepository.updateCustomer).toHaveBeenCalledWith(
       customerId,
       updateCustomerRequestDto,
@@ -73,7 +85,9 @@ describe('UpdateCustomerUseCase', () => {
     expect(result.isLeft()).toBe(true);
     expect(result.value.constructor).toBe(RequiredParametersError);
     expect(result.value).toStrictEqual(customerDoesNotExist.value);
-    expect(customerRepository.getCustomer).toHaveBeenCalledWith({ id: customerId });
+    expect(customerRepository.getCustomer).toHaveBeenCalledWith({
+      id: customerId,
+    });
     expect(passwordHasher.hashPassword).not.toHaveBeenCalled();
     expect(customerRepository.updateCustomer).not.toHaveBeenCalled();
   });

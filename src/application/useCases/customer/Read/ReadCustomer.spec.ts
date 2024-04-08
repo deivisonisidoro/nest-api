@@ -29,13 +29,19 @@ describe('ReadCustomerUseCase', () => {
       id: randomUUID(),
     };
 
-    (customerRepository.getCustomer as jest.Mock).mockResolvedValue(mockCustomerResponse);
+    (customerRepository.getCustomer as jest.Mock).mockResolvedValue(
+      mockCustomerResponse,
+    );
 
-    const result = await readCustomerUseCase.execute(mockReadCustomerRequestDto);
+    const result = await readCustomerUseCase.execute(
+      mockReadCustomerRequestDto,
+    );
 
     expect(result.isRight()).toBe(true);
     expect(result.value).toEqual(mockCustomerResponse);
-    expect(customerRepository.getCustomer).toHaveBeenCalledWith(mockReadCustomerRequestDto);
+    expect(customerRepository.getCustomer).toHaveBeenCalledWith(
+      mockReadCustomerRequestDto,
+    );
   });
 
   it('should return error when customer does not exist', async () => {
@@ -46,11 +52,15 @@ describe('ReadCustomerUseCase', () => {
 
     (customerRepository.getCustomer as jest.Mock).mockResolvedValue(null);
 
-    const result = await readCustomerUseCase.execute(mockReadCustomerRequestDto);
+    const result = await readCustomerUseCase.execute(
+      mockReadCustomerRequestDto,
+    );
 
     expect(result.isLeft()).toBe(true);
     expect(result.value.constructor).toBe(RequiredParametersError);
     expect(result.value).toStrictEqual(customerNotFound.value);
-    expect(customerRepository.getCustomer).toHaveBeenCalledWith(mockReadCustomerRequestDto);
+    expect(customerRepository.getCustomer).toHaveBeenCalledWith(
+      mockReadCustomerRequestDto,
+    );
   });
 });

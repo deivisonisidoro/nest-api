@@ -12,7 +12,9 @@ export abstract class AbstractCustomersController {
    * @param {CreateCustomerRequestDto} createCustomerRequestDto - Data required to create the customer.
    * @returns {Promise<Customer>} A promise resolving to the created customer.
    */
-  abstract create(createCustomerRequestDto: CreateCustomerRequestDto): Promise<Customer>;
+  abstract create(
+    createCustomerRequestDto: CreateCustomerRequestDto,
+  ): Promise<Customer>;
 
   /**
    * Retrieves all customers.

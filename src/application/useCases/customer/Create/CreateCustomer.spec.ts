@@ -26,7 +26,10 @@ describe('CreateCustomerUseCase', () => {
     createdAt: new Date(),
   };
   const customerAlreadyExists = left(
-    new RequiredParametersError(CustomerErrorMessageEnum.CustomerAlreadyExists, 400),
+    new RequiredParametersError(
+      CustomerErrorMessageEnum.CustomerAlreadyExists,
+      400,
+    ),
   );
 
   beforeEach(() => {
@@ -43,7 +46,10 @@ describe('CreateCustomerUseCase', () => {
       hashPassword: jest.fn(),
     } as unknown as AbstractPasswordHasher;
 
-    createCustomerUseCase = new CreateCustomerUseCase(customerRepository, passwordHasher);
+    createCustomerUseCase = new CreateCustomerUseCase(
+      customerRepository,
+      passwordHasher,
+    );
   });
 
   it('should create a new customer when customer does not exist', async () => {
@@ -51,9 +57,13 @@ describe('CreateCustomerUseCase', () => {
     (passwordHasher.hashPassword as jest.Mock).mockResolvedValue(
       'hashedPassword',
     );
-    (customerRepository.createCustomer as jest.Mock).mockResolvedValue(mockCustomer);
+    (customerRepository.createCustomer as jest.Mock).mockResolvedValue(
+      mockCustomer,
+    );
 
-    const result = await createCustomerUseCase.execute(createCustomerRequestDto);
+    const result = await createCustomerUseCase.execute(
+      createCustomerRequestDto,
+    );
 
     expect(result.isRight()).toBe(true);
     expect(result.value).toEqual(mockCustomer);
@@ -72,7 +82,9 @@ describe('CreateCustomerUseCase', () => {
   it('should return error when customer already exists', async () => {
     (customerRepository.getCustomer as jest.Mock).mockResolvedValue({});
 
-    const result = await createCustomerUseCase.execute(createCustomerRequestDto);
+    const result = await createCustomerUseCase.execute(
+      createCustomerRequestDto,
+    );
 
     expect(result.isLeft()).toBe(true);
     expect(result.value.constructor).toBe(RequiredParametersError);

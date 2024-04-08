@@ -10,9 +10,9 @@ import { PrismaCustomerRepository } from '../../../infra/repositories/PrismaCust
 import { AuthController } from '../controllers/auth/Auth';
 import { AuthGuard } from '../guards/auth/auth.guard';
 import { AbstractAuthManager } from '../managers/Auth';
+import { AbstractCustomerManager } from '../managers/Customer';
 import { AuthManager } from '../managers/implementations/Auth';
 import { CustomerManager } from '../managers/implementations/Customer';
-import { AbstractCustomerManager } from '../managers/Customer';
 import { CustomersModule } from './customers.module';
 
 @Module({

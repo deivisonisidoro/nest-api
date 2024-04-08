@@ -37,7 +37,9 @@ describe('SignInUseCase', () => {
         password: 'password',
       };
       const mockToken = 'mock-token';
-      customerRepository.getCustomer = jest.fn().mockResolvedValue(mockCustomer);
+      customerRepository.getCustomer = jest
+        .fn()
+        .mockResolvedValue(mockCustomer);
       passwordHasher.comparePasswords = jest.fn().mockResolvedValue(true);
       jwtService.signAsync = jest.fn().mockResolvedValue(mockToken);
 
@@ -67,7 +69,9 @@ describe('SignInUseCase', () => {
         email: 'test@example.com',
         password: 'password',
       };
-      customerRepository.getCustomer = jest.fn().mockResolvedValue(mockCustomer);
+      customerRepository.getCustomer = jest
+        .fn()
+        .mockResolvedValue(mockCustomer);
       passwordHasher.comparePasswords = jest.fn().mockResolvedValue(false);
 
       const result = await signInUseCase.execute(email, password);

@@ -1,8 +1,7 @@
+import { CreateCustomerRequestDto } from '../../../../domain/dtos/customer/Create';
 import { Customer } from '../../../../domain/entities/Customer';
 import { Either } from '../../../../domain/utils/either/either';
 import { RequiredParametersError } from '../../../../domain/utils/errors/RequiredParametersError';
-
-import { CreateCustomerRequestDto } from '../../../../domain/dtos/customer/Create';
 
 /**
  * Represents the response of creating a customer, which can either be a success (Right) containing the created customer

@@ -8,7 +8,10 @@ describe('DeleteCustomerUseCase', () => {
   let customerRepository: AbstractCustomerRepository;
   let deleteCustomerUseCase: DeleteCustomerUseCase;
   const customerDoesNotExist = left(
-    new RequiredParametersError(CustomerErrorMessageEnum.CustomerDoesNotExist, 400),
+    new RequiredParametersError(
+      CustomerErrorMessageEnum.CustomerDoesNotExist,
+      400,
+    ),
   );
 
   beforeEach(() => {
@@ -28,7 +31,9 @@ describe('DeleteCustomerUseCase', () => {
     expect(result.isLeft()).toBe(true);
     expect(result.value).toBeInstanceOf(RequiredParametersError);
     expect(result.value).toStrictEqual(customerDoesNotExist.value);
-    expect(customerRepository.getCustomer).toHaveBeenCalledWith({ id: 'customer_id' });
+    expect(customerRepository.getCustomer).toHaveBeenCalledWith({
+      id: 'customer_id',
+    });
     expect(customerRepository.deleteCustomer).not.toHaveBeenCalled();
   });
 
@@ -40,8 +45,12 @@ describe('DeleteCustomerUseCase', () => {
 
     expect(result.isRight()).toBe(true);
     expect(result.value).toBe(true);
-    expect(customerRepository.getCustomer).toHaveBeenCalledWith({ id: 'customer_id' });
-    expect(customerRepository.deleteCustomer).toHaveBeenCalledWith('customer_id');
+    expect(customerRepository.getCustomer).toHaveBeenCalledWith({
+      id: 'customer_id',
+    });
+    expect(customerRepository.deleteCustomer).toHaveBeenCalledWith(
+      'customer_id',
+    );
   });
 
   it('should return false when customer deletion fails', async () => {
@@ -52,7 +61,11 @@ describe('DeleteCustomerUseCase', () => {
 
     expect(result.isRight()).toBe(true);
     expect(result.value).toBe(false);
-    expect(customerRepository.getCustomer).toHaveBeenCalledWith({ id: 'customer_id' });
-    expect(customerRepository.deleteCustomer).toHaveBeenCalledWith('customer_id');
+    expect(customerRepository.getCustomer).toHaveBeenCalledWith({
+      id: 'customer_id',
+    });
+    expect(customerRepository.deleteCustomer).toHaveBeenCalledWith(
+      'customer_id',
+    );
   });
 });

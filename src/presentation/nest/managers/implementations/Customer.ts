@@ -40,11 +40,11 @@ export class CustomerManager implements AbstractCustomerManager {
   async create(
     createCustomerRequestDto: CreateCustomerRequestDto,
   ): Promise<CreateCustomerResponse> {
-    const createCustomerUseCase: AbstractCreateCustomerUseCase = new CreateCustomerUseCase(
-      this.customerRepository,
-      this.passwordHasher,
+    const createCustomerUseCase: AbstractCreateCustomerUseCase =
+      new CreateCustomerUseCase(this.customerRepository, this.passwordHasher);
+    const result = await createCustomerUseCase.execute(
+      createCustomerRequestDto,
     );
-    const result = await createCustomerUseCase.execute(createCustomerRequestDto);
     return result;
   }
 
@@ -55,7 +55,9 @@ export class CustomerManager implements AbstractCustomerManager {
   async getAll(
     readCustomersRequestDto: ReadCustomersRequestDto,
   ): Promise<GetCustomersResponse> {
-    const readCustomersUseCase = new ReadCustomersUseCase(this.customerRepository);
+    const readCustomersUseCase = new ReadCustomersUseCase(
+      this.customerRepository,
+    );
     const result = await readCustomersUseCase.execute(readCustomersRequestDto);
     return result;
   }
@@ -66,7 +68,9 @@ export class CustomerManager implements AbstractCustomerManager {
    * @returns {Promise<Customer | null>} The customer if found, or null if not found.
    */
   async getById(customerId: string): Promise<CustomerResponse> {
-    const readCustomerUseCase = new ReadCustomerUseCase(this.customerRepository);
+    const readCustomerUseCase = new ReadCustomerUseCase(
+      this.customerRepository,
+    );
     const result = await readCustomerUseCase.execute({ id: customerId });
     return result;
   }
@@ -98,7 +102,9 @@ export class CustomerManager implements AbstractCustomerManager {
    * @returns {Promise<boolean>} A promise resolving to true if the customer was deleted successfully, false otherwise.
    */
   async delete(customerId: string): Promise<DeleteCustomerResponse> {
-    const deleteCustomerUseCase = new DeleteCustomerUseCase(this.customerRepository);
+    const deleteCustomerUseCase = new DeleteCustomerUseCase(
+      this.customerRepository,
+    );
     const result = await deleteCustomerUseCase.execute(customerId);
     return result;
   }

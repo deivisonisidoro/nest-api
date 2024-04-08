@@ -34,7 +34,10 @@ export class ReadCustomersUseCase implements AbstractReadCustomersUseCase {
     const customers = await this.customerRepository.getCustomers(data);
     if (customers.length === 0) {
       return left(
-        new RequiredParametersError(CustomerErrorMessageEnum.CustomerNotFound, 404),
+        new RequiredParametersError(
+          CustomerErrorMessageEnum.CustomerNotFound,
+          404,
+        ),
       );
     }
     return right(customers);
