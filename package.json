@@ -20,7 +20,7 @@
     "test:e2e": "dotenv -e .env.test -- jest -i --no-cache --config ./tests/jest-e2e.json",
     "test:int": "dotenv -e .env.test -- jest -i --no-cache --watch --config jest-int.json",
     "db:restart": "docker compose down && docker compose up -d && sleep 1",
-    "pretest:e2e": "pnpm db:restart && dotenv -e .env.test -- pnpm prisma migrate reset --force",
+    "pretest:e2e": "npx db:restart && dotenv -e .env.test -- npx prisma migrate reset --force",
     "prepare": "husky"
   },
   "husky": {
